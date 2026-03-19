@@ -218,8 +218,8 @@ JAZZMIN_SETTINGS = {
     "site_brand": "Church Admin Portal",
     
     # Logo to use for your site
-    "site_logo": "images/lutheran-rose-logo.png",
-    "login_logo": "images/lutheran-rose-logo.png",
+    "site_logo": "images/lutheran-rose.svg",
+    "login_logo": "images/lutheran-rose.svg",
     
     # Logo to use for your site, must be present in static files
     "site_logo_classes": "img-circle",
