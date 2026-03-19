@@ -49,11 +49,9 @@ class GalleryPhoto(models.Model):
     
     def save(self, *args, **kwargs):
         """Auto-generate title and thumbnail on save"""
-        # Auto-generate title if not provided
+        # Auto-generate simple title if not provided
         if not self.title:
-            # Count existing photos in album
-            photo_count = self.album.photos.count() + 1
-            self.title = f"{self.album.title} - Photo {photo_count}"
+            self.title = self.album.title
         
         # Auto-generate thumbnail
         if self.image and not self.thumbnail:
