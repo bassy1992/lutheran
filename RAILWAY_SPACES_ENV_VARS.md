@@ -15,17 +15,17 @@ Add these environment variables to your Railway backend service:
 USE_SPACES=True
 DO_SPACES_KEY=DO8014PDYEMPMGC8CMYR
 DO_SPACES_SECRET=MRio2V3xaCvUMJXWwGmzAjfJceHIggO1EH4ripqy5j8
-DO_SPACES_BUCKET_NAME=lutheran-church-media
+DO_SPACES_BUCKET_NAME=lutheran
 DO_SPACES_ENDPOINT_URL=https://sfo3.digitaloceanspaces.com
 DO_SPACES_REGION=sfo3
-DO_SPACES_CDN_DOMAIN=lutheran-church-media.sfo3.cdn.digitaloceanspaces.com
+DO_SPACES_CDN_DOMAIN=lutheran.sfo3.cdn.digitaloceanspaces.com
 ```
 
 ## Important Notes:
 
-1. **Replace `lutheran-church-media`** with your actual bucket name
-2. **Region is SFO3** (San Francisco)
-3. **CDN Domain format**: `{your-bucket-name}.sfo3.cdn.digitaloceanspaces.com`
+1. **Bucket name**: `lutheran` ✓
+2. **Region is SFO3** (San Francisco) ✓
+3. **CDN Domain**: `lutheran.sfo3.cdn.digitaloceanspaces.com` ✓
 4. After adding variables, Railway will automatically redeploy
 
 ## Security Warning:
