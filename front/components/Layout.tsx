@@ -38,15 +38,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-900 shadow-lg py-3' : 'bg-slate-900/95 py-5'}`}>
         <div className="container mx-auto px-4 md:px-8 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2 group" onClick={closeMenu}>
-            <div className={`p-1.5 rounded-lg bg-blue-700 text-white transform group-hover:rotate-12 transition-transform`}>
+            <div className={`p-1.5 rounded-lg bg-blue-600 text-white transform group-hover:rotate-12 transition-transform`}>
               <Church size={24} />
             </div>
             <div>
-              <span className={`block font-bold leading-none text-xl ${scrolled ? 'text-blue-900' : 'text-white'}`}>TRINITY LUTHERAN</span>
-              <span className={`block text-[10px] tracking-[0.2em] font-medium ${scrolled ? 'text-blue-600' : 'text-blue-200'}`}>GHANA</span>
+              <span className="block font-bold leading-none text-xl text-white">TRINITY LUTHERAN</span>
+              <span className="block text-[10px] tracking-[0.2em] font-medium text-blue-300">GHANA</span>
             </div>
           </Link>
 
@@ -58,8 +58,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 to={item.path}
                 className={`text-sm font-semibold transition-colors uppercase tracking-wider ${
                   location.pathname === item.path 
-                    ? (scrolled ? 'text-blue-700' : 'text-blue-400')
-                    : (scrolled ? 'text-slate-600 hover:text-blue-600' : 'text-slate-100 hover:text-white')
+                    ? 'text-blue-400'
+                    : 'text-slate-200 hover:text-white'
                 }`}
               >
                 {item.label}
@@ -68,11 +68,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <LanguageSelector />
             <Link 
               to="/donate" 
-              className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${
-                scrolled 
-                  ? 'bg-blue-700 text-white hover:bg-blue-800' 
-                  : 'bg-white text-blue-900 hover:bg-slate-100'
-              }`}
+              className="px-6 py-2 rounded-full font-bold text-sm transition-all bg-blue-600 text-white hover:bg-blue-700"
             >
               GIVE NOW
             </Link>
@@ -80,7 +76,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
           {/* Mobile Toggle */}
           <button className="lg:hidden p-2 text-current" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={28} className={scrolled ? 'text-slate-900' : 'text-white'} /> : <Menu size={28} className={scrolled ? 'text-slate-900' : 'text-white'} />}
+            {isMenuOpen ? <X size={28} className="text-white" /> : <Menu size={28} className="text-white" />}
           </button>
         </div>
 
