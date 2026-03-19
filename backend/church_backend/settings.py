@@ -143,6 +143,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # WhiteNoise configuration - use simpler storage to avoid collectstatic issues
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
@@ -215,11 +218,12 @@ JAZZMIN_SETTINGS = {
     "site_brand": "Church Admin Portal",
     
     # Logo to use for your site
-    "site_logo": None,  # Add your logo path here if you have one
-    "login_logo": None,
+    "site_logo": "images/lutheran-rose-logo.png",
+    "login_logo": "images/lutheran-rose-logo.png",
     
     # Logo to use for your site, must be present in static files
     "site_logo_classes": "img-circle",
+    "login_logo_dark": None,
     
     # Welcome text on the login screen
     "welcome_sign": "Welcome to Church Admin Portal",
