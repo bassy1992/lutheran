@@ -38,15 +38,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-900 shadow-lg py-3' : 'bg-slate-900/95 py-5'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-900 shadow-lg py-3' : 'bg-slate-900/95 py-4'}`}>
         <div className="container mx-auto px-4 md:px-8 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2 group" onClick={closeMenu}>
+          <Link to="/" className="flex items-center gap-3 group" onClick={closeMenu}>
             <img 
               src="/logo.jpeg" 
               alt="Trinity Lutheran Church" 
-              className="h-12 w-12 object-contain"
+              className="h-11 w-11 object-contain transition-transform group-hover:scale-110"
               onError={(e) => {
-                // Fallback to icon if image fails to load
                 e.currentTarget.style.display = 'none';
                 e.currentTarget.nextElementSibling?.classList.remove('hidden');
               }}
@@ -54,65 +53,77 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div className="p-1.5 rounded-lg bg-blue-600 text-white transform group-hover:rotate-12 transition-transform hidden">
               <Church size={24} />
             </div>
-            <div>
-              <span className="block font-bold leading-none text-xl text-white">TRINITY LUTHERAN</span>
-              <span className="block text-[10px] tracking-[0.2em] font-medium text-blue-300">GHANA</span>
+            <div className="hidden sm:block">
+              <span className="block font-bold leading-tight text-lg text-white">TRINITY LUTHERAN</span>
+              <span className="block text-[9px] tracking-[0.25em] font-medium text-blue-300">GHANA</span>
             </div>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-1">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`text-sm font-semibold transition-colors uppercase tracking-wider ${
+                className={`px-4 py-2 text-sm font-medium transition-all rounded-lg ${
                   location.pathname === item.path 
-                    ? 'text-blue-400'
-                    : 'text-slate-200 hover:text-white'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-slate-200 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 {item.label}
               </Link>
             ))}
-            <LanguageSelector />
+            <div className="ml-2">
+              <LanguageSelector />
+            </div>
             <Link 
               to="/donate" 
-              className="px-6 py-2 rounded-full font-bold text-sm transition-all bg-blue-600 text-white hover:bg-blue-700"
+              className="ml-2 px-5 py-2 rounded-lg font-semibold text-sm transition-all bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/30"
             >
-              GIVE NOW
+              Give
             </Link>
           </div>
 
           {/* Mobile Toggle */}
-          <button className="lg:hidden p-2 text-current" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={28} className="text-white" /> : <Menu size={28} className="text-white" />}
+          <button 
+            className="lg:hidden p-2 rounded-lg hover:bg-slate-800 transition-colors" 
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <X size={24} className="text-white" /> : <Menu size={24} className="text-white" />}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-2xl py-6 flex flex-col items-center gap-6 animate-fadeIn">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
+          <div className="lg:hidden absolute top-full left-0 w-full bg-slate-900 border-t border-slate-800 shadow-2xl animate-fadeIn">
+            <div className="container mx-auto px-4 py-6 flex flex-col gap-2">
+              {NAV_ITEMS.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={closeMenu}
+                  className={`px-4 py-3 rounded-lg text-base font-medium transition-all ${
+                    location.pathname === item.path 
+                      ? 'bg-blue-600 text-white' 
+                      : 'text-slate-200 hover:bg-slate-800'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <div className="px-4 py-2">
+                <LanguageSelector />
+              </div>
+              <Link 
+                to="/donate" 
                 onClick={closeMenu}
-                className={`text-lg font-bold uppercase ${location.pathname === item.path ? 'text-blue-700' : 'text-slate-600'}`}
+                className="mt-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold text-center hover:bg-blue-700 transition-all"
               >
-                {item.label}
+                Give Now
               </Link>
-            ))}
-            <div className="w-full px-6">
-              <LanguageSelector />
             </div>
-            <Link 
-              to="/donate" 
-              onClick={closeMenu}
-              className="bg-blue-700 text-white px-10 py-3 rounded-full font-bold w-[80%] text-center"
-            >
-              GIVE NOW
-            </Link>
           </div>
         )}
       </nav>
