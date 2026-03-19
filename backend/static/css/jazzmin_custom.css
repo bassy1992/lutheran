@@ -1,0 +1,23 @@
+/* Custom styles for Jazzmin admin */
+
+/* Logo size on login page */
+.login-logo img {
+    max-width: 120px !important;
+    max-height: 120px !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+/* Logo size in navbar/header */
+.brand-link .brand-image {
+    max-width: 40px !important;
+    max-height: 40px !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+/* Adjust logo positioning */
+.brand-link {
+    display: flex;
+    align-items: center;
+}
