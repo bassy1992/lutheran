@@ -158,7 +158,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ sermon, onPlay }) => {
 };
 
 const Sermons: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'sermons' | 'bulletin'>('sermons');
+  const [activeTab, setActiveTab] = useState<'sermons' | 'bulletin' | 'pastors'>('sermons');
   const [page, setPage] = useState(1);
   const [pastorFilter, setPastorFilter] = useState<number | ''>('');
   const [seriesFilter, setSeriesFilter] = useState<number | ''>('');
@@ -339,6 +339,16 @@ const Sermons: React.FC = () => {
             >
               Weekly Bulletin
             </button>
+            <button
+              onClick={() => setActiveTab('pastors')}
+              className={`px-6 py-4 font-semibold transition-all border-b-2 ${
+                activeTab === 'pastors'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Our Pastors
+            </button>
           </div>
         </div>
       </div>
@@ -347,6 +357,117 @@ const Sermons: React.FC = () => {
       {activeTab === 'bulletin' ? (
         <div className="container mx-auto px-4 md:px-8 py-12">
           <WeeklyBulletin />
+        </div>
+      ) : activeTab === 'pastors' ? (
+        <div className="container mx-auto px-4 md:px-8 py-12">
+          {/* Pastors Grid */}
+          {pastorsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
+                  <div className="h-64 bg-slate-200"></div>
+                  <div className="p-6 space-y-4">
+                    <div className="h-6 bg-slate-200 rounded w-3/4"></div>
+                    <div className="h-4 bg-slate-200 rounded w-1/2"></div>
+                    <div className="space-y-2">
+                      <div className="h-4 bg-slate-200 rounded w-full"></div>
+                      <div className="h-4 bg-slate-200 rounded w-5/6"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : pastors && pastors.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {pastors.filter(p => p.is_active).map((pastor) => (
+                <div key={pastor.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                  {/* Pastor Photo */}
+                  <div className="relative h-64 overflow-hidden bg-gradient-to-br from-blue-100 to-blue-50">
+                    {pastor.photo_display_url ? (
+                      <img 
+                        src={pastor.photo_display_url}
+                        alt={pastor.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <div className="w-32 h-32 rounded-full bg-blue-200 flex items-center justify-center text-blue-700 text-4xl font-bold">
+                          {pastor.name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                  </div>
+
+                  {/* Pastor Details */}
+                  <div className="p-6 space-y-4">
+                    <div>
+                      <h3 className="text-2xl font-bold text-slate-900">{pastor.name}</h3>
+                      <p className="text-blue-700 font-medium">{pastor.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
+                    </div>
+
+                    <p className="text-slate-600 text-sm line-clamp-4">{pastor.bio}</p>
+
+                    <div className="space-y-2 text-sm text-slate-600">
+                      {pastor.email && (
+                        <div className="flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          <a href={`mailto:${pastor.email}`} className="hover:text-blue-700 transition-colors">
+                            {pastor.email}
+                          </a>
+                        </div>
+                      )}
+                      {pastor.phone && (
+                        <div className="flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                          <a href={`tel:${pastor.phone}`} className="hover:text-blue-700 transition-colors">
+                            {pastor.phone}
+                          </a>
+                        </div>
+                      )}
+                      {pastor.joined_date && (
+                        <div className="flex items-center gap-2">
+                          <Calendar size={16} />
+                          <span>Joined {new Date(pastor.joined_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+                        </div>
+                      )}
+                      {pastor.sermon_count !== undefined && pastor.sermon_count > 0 && (
+                        <div className="flex items-center gap-2">
+                          <BookOpen size={16} />
+                          <span>{pastor.sermon_count} sermon{pastor.sermon_count !== 1 ? 's' : ''}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* View Sermons Button */}
+                    {pastor.sermon_count && pastor.sermon_count > 0 && (
+                      <button
+                        onClick={() => {
+                          setActiveTab('sermons');
+                          setPastorFilter(pastor.id);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="w-full px-4 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                      >
+                        <PlayCircle size={18} />
+                        View Sermons
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <BookOpen size={64} className="mx-auto text-slate-300 mb-4" />
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">No pastors found</h3>
+              <p className="text-slate-600">Check back soon!</p>
+            </div>
+          )}
         </div>
       ) : (
         <>

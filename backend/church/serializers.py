@@ -14,12 +14,18 @@ class ChurchInfoSerializer(serializers.ModelSerializer):
 
 
 class PastorSerializer(serializers.ModelSerializer):
+    photo_display_url = serializers.ReadOnlyField()
+    sermon_count = serializers.SerializerMethodField()
+    
     class Meta:
         model = Pastor
         fields = [
-            'id', 'name', 'role', 'bio', 'photo', 'email', 'phone',
-            'joined_date', 'is_active', 'order'
+            'id', 'name', 'role', 'bio', 'photo', 'photo_url', 'photo_display_url',
+            'email', 'phone', 'joined_date', 'is_active', 'order', 'sermon_count'
         ]
+    
+    def get_sermon_count(self, obj):
+        return obj.sermons.filter(is_published=True).count()
 
 
 class ServiceTimeSerializer(serializers.ModelSerializer):
