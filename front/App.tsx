@@ -14,6 +14,7 @@ const EventDetail = lazy(() => import('./pages/EventDetail'));
 const EventCalendarPage = lazy(() => import('./pages/EventCalendarPage'));
 const Sermons = lazy(() => import('./pages/Sermons'));
 const Ministries = lazy(() => import('./pages/Ministries'));
+const MinistryDetail = lazy(() => import('./pages/MinistryDetail'));
 const Donate = lazy(() => import('./pages/DonateWithPaystack'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Gallery = lazy(() => import('./pages/Gallery'));
@@ -69,6 +70,7 @@ const App: React.FC = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/ministries" element={<Ministries />} />
+                <Route path="/ministries/:id" element={<MinistryDetail />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/donate" element={<Donate />} />
                 <Route path="/events" element={<Events />} />

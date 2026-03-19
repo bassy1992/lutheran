@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Users, Mail, Phone, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { ministriesService } from '../src/services/api/endpoints/ministries.service';
 import type { Ministry, PaginatedResponse } from '../src/types/models';
@@ -221,21 +222,25 @@ const Ministries: React.FC = () => {
                   className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
                 >
                   {/* Ministry Image */}
-                  {ministry.image ? (
-                    <img
-                      src={ministry.image}
-                      alt={ministry.name}
-                      className="w-full h-64 object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-64 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                      <Users className="w-20 h-20 text-white opacity-50" />
-                    </div>
-                  )}
+                  <Link to={`/ministries/${ministry.id}`}>
+                    {ministry.image ? (
+                      <img
+                        src={ministry.image}
+                        alt={ministry.name}
+                        className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-64 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center hover:from-blue-600 hover:to-blue-800 transition-colors">
+                        <Users className="w-20 h-20 text-white opacity-50" />
+                      </div>
+                    )}
+                  </Link>
 
                   {/* Ministry Details */}
                   <div className="p-6 space-y-4">
-                    <h3 className="text-2xl font-bold text-slate-900">{ministry.name}</h3>
+                    <Link to={`/ministries/${ministry.id}`}>
+                      <h3 className="text-2xl font-bold text-slate-900 hover:text-blue-700 transition-colors">{ministry.name}</h3>
+                    </Link>
                     <p className="text-slate-600 line-clamp-3">{ministry.description}</p>
 
                     {/* Leader Information */}
@@ -278,15 +283,23 @@ const Ministries: React.FC = () => {
                       </span>
                     </div>
 
-                    {/* Express Interest Button (only for authenticated users) */}
-                    {isAuthenticated() && (
-                      <button
-                        onClick={() => handleExpressInterestClick(ministry)}
-                        className="w-full bg-blue-700 text-white py-3 rounded-full font-bold hover:bg-blue-800 transition-all"
+                    {/* View Details & Express Interest Buttons */}
+                    <div className="flex gap-3">
+                      <Link
+                        to={`/ministries/${ministry.id}`}
+                        className="flex-1 bg-slate-100 text-slate-700 py-3 rounded-full font-bold hover:bg-slate-200 transition-all text-center"
                       >
-                        Express Interest
-                      </button>
-                    )}
+                        View Details
+                      </Link>
+                      {isAuthenticated() && (
+                        <button
+                          onClick={() => handleExpressInterestClick(ministry)}
+                          className="flex-1 bg-blue-700 text-white py-3 rounded-full font-bold hover:bg-blue-800 transition-all"
+                        >
+                          Join
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
