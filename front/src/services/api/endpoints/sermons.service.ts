@@ -31,4 +31,19 @@ export const sermonsService = {
 
   getSeriesDetail: (id: number) =>
     apiClient.request<SermonSeries>({ method: 'GET', url: `/sermons/series/${id}/` }),
+
+  // Weekly Bulletin endpoints
+  getBulletins: (params?: { is_active?: boolean }) =>
+    apiClient.request<PaginatedResponse<any>>({ 
+      method: 'GET', 
+      url: '/sermons/bulletins/', 
+      params 
+    }),
+
+  getCurrentBulletin: () =>
+    apiClient.request<any>({ 
+      method: 'GET', 
+      url: '/sermons/bulletins/', 
+      params: { is_active: true } 
+    }),
 };

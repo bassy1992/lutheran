@@ -21,6 +21,7 @@ import { sermonsService } from '../src/services/api/endpoints/sermons.service';
 import { churchService } from '../src/services/api/endpoints/church.service';
 import SermonSeriesDisplay from '../components/SermonSeriesDisplay';
 import ShareButtons from '../components/ShareButtons';
+import WeeklyBulletin from '../components/WeeklyBulletin';
 import { setMetaTags, resetMetaTags } from '../src/utils/metaTags';
 import type { Sermon, SermonSeries, Pastor, PaginatedResponse } from '../src/types/models';
 
@@ -157,6 +158,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ sermon, onPlay }) => {
 };
 
 const Sermons: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'sermons' | 'bulletin'>('sermons');
   const [page, setPage] = useState(1);
   const [pastorFilter, setPastorFilter] = useState<number | ''>('');
   const [seriesFilter, setSeriesFilter] = useState<number | ''>('');
@@ -313,6 +315,41 @@ const Sermons: React.FC = () => {
         </div>
       </section>
 
+      {/* Tabs */}
+      <div className="bg-white border-b border-slate-200">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setActiveTab('sermons')}
+              className={`px-6 py-4 font-semibold transition-all border-b-2 ${
+                activeTab === 'sermons'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Sermons
+            </button>
+            <button
+              onClick={() => setActiveTab('bulletin')}
+              className={`px-6 py-4 font-semibold transition-all border-b-2 ${
+                activeTab === 'bulletin'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Weekly Bulletin
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'bulletin' ? (
+        <div className="container mx-auto px-4 md:px-8 py-12">
+          <WeeklyBulletin />
+        </div>
+      ) : (
+        <>
       {/* Sermon Series Display */}
       <SermonSeriesDisplay
         series={seriesList || []}
@@ -716,6 +753,8 @@ const Sermons: React.FC = () => {
           )}
         </div>
       </section>
+      </>
+      )}
     </div>
   );
 };
