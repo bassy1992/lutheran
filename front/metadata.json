@@ -1,0 +1,7 @@
+{
+  "name": "Trinity Lutheran Church Ghana",
+  "description": "A vibrant digital home for the Trinity Lutheran Church community in Ghana, featuring service schedules, ministry information, sermon archives, and an AI-powered spiritual assistant.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

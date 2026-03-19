@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Mobile-specific optimizations */
+@layer utilities {
+  /* Prevent text size adjustment on mobile */
+  .text-size-adjust-none {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Safe area insets for notched devices */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Touch-friendly tap targets */
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent horizontal scroll */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Smooth scrolling */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Base mobile styles */
+@layer base {
+  html {
+    @apply text-size-adjust-none smooth-scroll;
+  }
+
+  body {
+    @apply overflow-x-hidden;
+  }
+
+  /* Ensure images don't overflow */
+  img {
+    @apply max-w-full h-auto;
+  }
+
+  /* Better tap highlighting */
+  * {
+    -webkit-tap-highlight-color: rgba(59, 130, 246, 0.1);
+  }
+}
+
+/* Animation utilities */
+@layer utilities {
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Mobile-specific media queries */
+@media (max-width: 640px) {
+  /* Larger touch targets on mobile */
+  button, a {
+    @apply tap-target;
+  }
+
+  /* Better spacing on mobile */
+  .container {
+    @apply px-4;
+  }
+}
+
+/* Tablet-specific adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    @apply px-6;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .container {
+    @apply px-8;
+  }
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, .serif {
+  font-family: 'Playfair Display', serif;
+}

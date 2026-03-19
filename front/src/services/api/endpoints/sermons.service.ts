@@ -1,0 +1,34 @@
+import { apiClient } from '../client';
+import type { Sermon, SermonSeries, PaginatedResponse } from '../../types/models';
+
+export const sermonsService = {
+  getSermons: (params?: {
+    page?: number;
+    pastor?: number;
+    series?: number;
+    search?: string;
+    date_from?: string;
+    date_to?: string;
+    is_featured?: boolean;
+  }) =>
+    apiClient.request<PaginatedResponse<Sermon>>({ 
+      method: 'GET', 
+      url: '/sermons/', 
+      params 
+    }),
+
+  getSermon: (id: number) =>
+    apiClient.request<Sermon>({ method: 'GET', url: `/sermons/${id}/` }),
+
+  incrementViewCount: (id: number) =>
+    apiClient.request<void>({ method: 'POST', url: `/sermons/${id}/increment-view/` }),
+
+  incrementDownloadCount: (id: number) =>
+    apiClient.request<void>({ method: 'POST', url: `/sermons/${id}/increment-download/` }),
+
+  getSeries: () =>
+    apiClient.request<SermonSeries[]>({ method: 'GET', url: '/sermons/series/' }),
+
+  getSeriesDetail: (id: number) =>
+    apiClient.request<SermonSeries>({ method: 'GET', url: `/sermons/series/${id}/` }),
+};
