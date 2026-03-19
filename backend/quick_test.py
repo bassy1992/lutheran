@@ -42,14 +42,26 @@ try:
     test_key = 'media/test/connection_test.txt'
     test_content = b'Hello from Lutheran Church!'
     
-    client.put_object(
-        Bucket=BUCKET_NAME,
-        Key=test_key,
-        Body=test_content,
-        ACL='public-read',
-        ContentType='text/plain'
-    )
-    print(f"   ✓ File uploaded: {test_key}")
+    # Try without ACL first
+    try:
+        client.put_object(
+            Bucket=BUCKET_NAME,
+            Key=test_key,
+            Body=test_content,
+            ContentType='text/plain'
+        )
+        print(f"   ✓ File uploaded: {test_key}")
+    except Exception as e:
+        print(f"   ✗ Upload failed: {e}")
+        print("\n   Trying with public-read ACL...")
+        client.put_object(
+            Bucket=BUCKET_NAME,
+            Key=test_key,
+            Body=test_content,
+            ACL='public-read',
+            ContentType='text/plain'
+        )
+        print(f"   ✓ File uploaded with ACL: {test_key}")
     
     # Test 3: Generate URL
     print("\n3. File URLs:")
