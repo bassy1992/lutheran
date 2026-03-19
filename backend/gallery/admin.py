@@ -10,10 +10,13 @@ from .models import GalleryAlbum, GalleryPhoto
 class MultipleFileInput(forms.FileInput):
     """Custom widget that supports multiple file uploads"""
     def __init__(self, attrs=None):
+        super().__init__(attrs)
+        
+    def render(self, name, value, attrs=None, renderer=None):
         if attrs is None:
             attrs = {}
-        attrs['multiple'] = True
-        super().__init__(attrs)
+        attrs['multiple'] = 'multiple'
+        return super().render(name, value, attrs, renderer)
 
 
 class BulkPhotoUploadForm(forms.Form):
