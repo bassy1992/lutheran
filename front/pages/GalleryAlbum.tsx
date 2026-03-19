@@ -229,13 +229,12 @@ const GalleryAlbumPage: React.FC = () => {
           <div className="max-w-7xl max-h-[90vh] w-full h-full flex flex-col items-center justify-center p-4">
             <img
               src={photos[selectedPhotoIndex].image}
-              alt={photos[selectedPhotoIndex].title}
+              alt={`Photo ${selectedPhotoIndex + 1}`}
               className="max-w-full max-h-full object-contain"
             />
             
             {/* Photo Info */}
             <div className="mt-4 text-center text-white max-w-2xl">
-              <h3 className="text-xl font-bold mb-2">{photos[selectedPhotoIndex].title}</h3>
               {photos[selectedPhotoIndex].description && (
                 <p className="text-slate-300 text-sm mb-2">{photos[selectedPhotoIndex].description}</p>
               )}
