@@ -21,7 +21,7 @@ class SermonAdmin(admin.ModelAdmin):
 
 class BibleReadingInline(admin.TabularInline):
     model = BibleReading
-    extra = 5
+    extra = 6
     fields = ['reading_type', 'reader_name', 'reader_photo', 'reader_photo_url', 'scripture_reference', 'order']
     readonly_fields = []
 

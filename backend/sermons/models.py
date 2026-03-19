@@ -74,6 +74,7 @@ class BibleReading(models.Model):
         ('gospel', '3rd Reading (Gospel)'),
         ('akan', 'Akan Reading'),
         ('fante', 'Fante Reading'),
+        ('ga', 'Ga Reading'),
     ]
     
     bulletin = models.ForeignKey(WeeklyBulletin, on_delete=models.CASCADE, related_name='readings')
