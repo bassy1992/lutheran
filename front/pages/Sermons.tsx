@@ -482,18 +482,6 @@ const Sermons: React.FC = () => {
       <section className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
         <div className="container mx-auto px-4 md:px-8 py-6">
           <div className="space-y-4">
-            {/* Search Input */}
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-              <input
-                type="text"
-                placeholder="Search sermons by title, description, or scripture..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-                className="w-full pl-12 pr-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
             {/* Filter Dropdowns and Date Pickers */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Pastor Filter */}
