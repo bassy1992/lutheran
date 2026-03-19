@@ -183,6 +183,52 @@
     .back-link:hover {
         text-decoration: underline;
     }
+    
+    .progress-container {
+        display: none;
+        margin-top: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .progress-bar-wrapper {
+        width: 100%;
+        height: 35px;
+        background: #e9ecef;
+        border-radius: 18px;
+        overflow: hidden;
+        margin-bottom: 15px;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #417690, #2b5266);
+        width: 0%;
+        transition: width 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    
+    .upload-status {
+        text-align: center;
+        color: #666;
+        font-size: 15px;
+        font-weight: 500;
+    }
+    
+    .upload-status.success {
+        color: #28a745;
+    }
+    
+    .upload-status.error {
+        color: #dc3545;
+    }
 </style>
 {% endblock %}
 
@@ -263,6 +309,13 @@
                 </div>
                 <div class="selected-files" id="selectedFiles"></div>
             </div>
+        </div>
+        
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+            <div class="upload-status" id="uploadStatus">Preparing upload...</div>
         </div>
         
         <div style="text-align: center; margin-top: 30px;">
@@ -374,5 +427,94 @@
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
     }
+    
+    // Form submission with progress bar
+    const createForm = document.getElementById('createForm');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const uploadStatus = document.getElementById('uploadStatus');
+    
+    createForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Validate required fields
+        const title = document.getElementById('id_title').value.trim();
+        const date = document.getElementById('id_date').value;
+        
+        if (!title) {
+            alert('Please enter an album title');
+            return;
+        }
+        
+        if (!date) {
+            alert('Please select a date');
+            return;
+        }
+        
+        // Show progress
+        submitButton.disabled = true;
+        progressContainer.style.display = 'block';
+        
+        const formData = new FormData(createForm);
+        const photoCount = selectedFiles.length;
+        
+        try {
+            if (photoCount > 0) {
+                uploadStatus.textContent = `Creating album and uploading ${photoCount} photo(s)...`;
+            } else {
+                uploadStatus.textContent = 'Creating album...';
+            }
+            
+            const xhr = new XMLHttpRequest();
+            
+            // Track upload progress
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    progressBar.style.width = percentComplete + '%';
+                    progressBar.textContent = Math.round(percentComplete) + '%';
+                    
+                    if (percentComplete < 100) {
+                        uploadStatus.textContent = `Uploading... ${Math.round(percentComplete)}%`;
+                    } else {
+                        uploadStatus.textContent = 'Processing photos...';
+                    }
+                }
+            });
+            
+            xhr.addEventListener('load', () => {
+                if (xhr.status === 200 || xhr.status === 302) {
+                    progressBar.style.width = '100%';
+                    progressBar.textContent = '100%';
+                    uploadStatus.textContent = '✓ Album created successfully! Redirecting...';
+                    uploadStatus.classList.add('success');
+                    
+                    setTimeout(() => {
+                        window.location.href = '{% url "admin:gallery_galleryalbum_changelist" %}';
+                    }, 1500);
+                } else {
+                    uploadStatus.textContent = '✗ Upload failed. Please try again.';
+                    uploadStatus.classList.add('error');
+                    submitButton.disabled = false;
+                }
+            });
+            
+            xhr.addEventListener('error', () => {
+                uploadStatus.textContent = '✗ Upload failed. Please check your connection and try again.';
+                uploadStatus.classList.add('error');
+                submitButton.disabled = false;
+            });
+            
+            xhr.open('POST', createForm.action);
+            xhr.setRequestHeader('X-CSRFToken', formData.get('csrfmiddlewaretoken'));
+            xhr.send(formData);
+            
+        } catch (error) {
+            console.error('Upload error:', error);
+            uploadStatus.textContent = '✗ Upload failed. Please try again.';
+            uploadStatus.classList.add('error');
+            submitButton.disabled = false;
+        }
+    });
 </script>
 {% endblock %}
