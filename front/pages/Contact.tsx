@@ -207,7 +207,7 @@ const Contact: React.FC = () => {
                 
                 <div className="aspect-video w-full bg-slate-800 rounded-xl mb-6 flex items-center justify-center overflow-hidden">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.8267!2d-0.1870!3d5.6037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNcKwMzYnMTMuMyJOIDDCsDExJzEzLjIiVw!5e0!3m2!1sen!2sgh!4v1234567890"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.7537!2d-0.1893!3d5.6037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf9084b2b7a773%3A0xd5e34c06b67c4e0e!2sLutheran%20Church%20Of%20Ghana%20-%20Trinity%20Congregation%20Tema!5e0!3m2!1sen!2sgh!4v1710000000000!5m2!1sen!2sgh"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
