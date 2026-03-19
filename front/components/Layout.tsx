@@ -54,8 +54,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <Church size={24} />
             </div>
             <div className="hidden sm:block">
-              <span className="block font-bold leading-tight text-lg text-white">TRINITY LUTHERAN</span>
-              <span className="block text-[9px] tracking-[0.25em] font-medium text-blue-300">GHANA</span>
+              <span className="block font-bold leading-tight text-lg text-white">TRINITY LUTHERAN CHURCH</span>
+              <span className="block text-[9px] tracking-[0.25em] font-medium text-blue-300">TEMA</span>
             </div>
           </Link>
 
