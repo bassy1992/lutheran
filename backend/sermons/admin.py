@@ -34,15 +34,15 @@ class ServiceHymnInline(admin.TabularInline):
 
 @admin.register(WeeklyBulletin)
 class WeeklyBulletinAdmin(admin.ModelAdmin):
-    list_display = ['title', 'service_date', 'is_active', 'has_communion', 'created_at']
-    list_filter = ['is_active', 'has_communion', 'service_date']
-    search_fields = ['title', 'notes']
+    list_display = ['title', 'service_date', 'pastor', 'is_active', 'has_communion', 'created_at']
+    list_filter = ['is_active', 'has_communion', 'service_date', 'pastor']
+    search_fields = ['title', 'notes', 'psalm_of_the_day']
     date_hierarchy = 'service_date'
     inlines = [BibleReadingInline, ServiceHymnInline]
     
     fieldsets = (
         ('Service Information', {
-            'fields': ('title', 'service_date', 'is_active', 'has_communion')
+            'fields': ('title', 'service_date', 'pastor', 'psalm_of_the_day', 'is_active', 'has_communion')
         }),
         ('Additional Notes', {
             'fields': ('notes',),
