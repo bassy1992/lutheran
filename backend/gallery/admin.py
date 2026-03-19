@@ -7,6 +7,15 @@ from django import forms
 from .models import GalleryAlbum, GalleryPhoto
 
 
+class MultipleFileInput(forms.FileInput):
+    """Custom widget that supports multiple file uploads"""
+    def __init__(self, attrs=None):
+        if attrs is None:
+            attrs = {}
+        attrs['multiple'] = True
+        super().__init__(attrs)
+
+
 class BulkPhotoUploadForm(forms.Form):
     """Form for creating album and uploading multiple photos at once"""
     # Album fields
@@ -19,7 +28,7 @@ class BulkPhotoUploadForm(forms.Form):
     
     # Photo fields
     photos = forms.FileField(
-        widget=forms.FileInput(attrs={'multiple': True}),
+        widget=MultipleFileInput(),
         required=False,
         help_text="Select multiple photos to upload"
     )
