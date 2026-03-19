@@ -31,7 +31,7 @@ class GalleryAlbum(models.Model):
 class GalleryPhoto(models.Model):
     """Individual photos in the gallery"""
     album = models.ForeignKey(GalleryAlbum, on_delete=models.CASCADE, related_name='photos')
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, blank=True, help_text="Optional: Leave blank to auto-generate")
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='gallery/photos/')
     thumbnail = models.ImageField(upload_to='gallery/thumbnails/', blank=True, null=True)
@@ -45,10 +45,17 @@ class GalleryPhoto(models.Model):
         ordering = ['order', '-created_at']
     
     def __str__(self):
-        return f"{self.title} - {self.album.title}"
+        return self.title if self.title else f"Photo {self.id} - {self.album.title}"
     
     def save(self, *args, **kwargs):
-        """Auto-generate thumbnail on save"""
+        """Auto-generate title and thumbnail on save"""
+        # Auto-generate title if not provided
+        if not self.title:
+            # Count existing photos in album
+            photo_count = self.album.photos.count() + 1
+            self.title = f"{self.album.title} - Photo {photo_count}"
+        
+        # Auto-generate thumbnail
         if self.image and not self.thumbnail:
             # Open the uploaded image
             img = Image.open(self.image)

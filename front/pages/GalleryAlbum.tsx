@@ -176,14 +176,10 @@ const GalleryAlbumPage: React.FC = () => {
                 >
                   <img
                     src={photo.thumbnail || photo.image}
-                    alt={photo.title}
+                    alt={`Photo ${index + 1}`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-center p-4">
-                      <p className="font-semibold text-sm line-clamp-2">{photo.title}</p>
-                    </div>
-                  </div>
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
                   {photo.is_featured && (
                     <div className="absolute top-2 right-2">
                       <span className="px-2 py-1 bg-yellow-500 text-white rounded text-xs font-bold">
