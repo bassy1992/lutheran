@@ -42,7 +42,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="container mx-auto px-4 md:px-8 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2 group" onClick={closeMenu}>
             <img 
-              src="/logo.png" 
+              src="/logo.jpeg" 
               alt="Trinity Lutheran Church" 
               className="h-12 w-12 object-contain"
               onError={(e) => {
@@ -128,7 +128,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <div className="space-y-6">
             <Link to="/" className="flex items-center gap-2">
               <img 
-                src="/logo.png" 
+                src="/logo.jpeg" 
                 alt="Trinity Lutheran Church" 
                 className="h-10 w-10 object-contain"
                 onError={(e) => {
