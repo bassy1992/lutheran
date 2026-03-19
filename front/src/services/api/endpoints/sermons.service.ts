@@ -13,18 +13,18 @@ export const sermonsService = {
   }) =>
     apiClient.request<PaginatedResponse<Sermon>>({ 
       method: 'GET', 
-      url: '/sermons/', 
+      url: '/sermons/sermons/', 
       params 
     }),
 
   getSermon: (id: number) =>
-    apiClient.request<Sermon>({ method: 'GET', url: `/sermons/${id}/` }),
+    apiClient.request<Sermon>({ method: 'GET', url: `/sermons/sermons/${id}/` }),
 
   incrementViewCount: (id: number) =>
-    apiClient.request<void>({ method: 'POST', url: `/sermons/${id}/increment-view/` }),
+    apiClient.request<void>({ method: 'POST', url: `/sermons/sermons/${id}/increment-view/` }),
 
   incrementDownloadCount: (id: number) =>
-    apiClient.request<void>({ method: 'POST', url: `/sermons/${id}/increment-download/` }),
+    apiClient.request<void>({ method: 'POST', url: `/sermons/sermons/${id}/increment-download/` }),
 
   getSeries: () =>
     apiClient.request<SermonSeries[]>({ method: 'GET', url: '/sermons/series/' }),
