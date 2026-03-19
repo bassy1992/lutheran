@@ -150,7 +150,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <div className="p-1.5 rounded-lg bg-blue-700 text-white hidden">
                 <Church size={24} />
               </div>
-              <span className="font-bold text-xl text-white">TRINITY LUTHERAN</span>
+              <div>
+                <span className="block font-bold leading-tight text-lg text-white">TRINITY LUTHERAN CHURCH</span>
+                <span className="block text-[9px] tracking-[0.25em] font-medium text-blue-300">TEMA</span>
+              </div>
             </Link>
             <p className="text-slate-400 leading-relaxed">
               Spreading the grace and truth of Jesus Christ throughout the heart of Ghana. Join our community of faith.
