@@ -19,7 +19,7 @@ class BulkPhotoUploadForm(forms.Form):
     
     # Photo fields
     photos = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        widget=forms.FileInput(attrs={'multiple': True}),
         required=False,
         help_text="Select multiple photos to upload"
     )
