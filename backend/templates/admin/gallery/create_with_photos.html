@@ -1,0 +1,378 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .form-container {
+        max-width: 900px;
+        margin: 20px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .form-section {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .form-section:last-child {
+        border-bottom: none;
+    }
+    
+    .form-section h2 {
+        color: #417690;
+        margin-bottom: 20px;
+        font-size: 20px;
+    }
+    
+    .form-row {
+        margin-bottom: 20px;
+    }
+    
+    .form-row label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .form-row input[type="text"],
+    .form-row input[type="date"],
+    .form-row textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    
+    .form-row textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+    
+    .form-row input[type="checkbox"] {
+        margin-right: 8px;
+    }
+    
+    .checkbox-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .checkbox-row label {
+        margin-bottom: 0;
+        font-weight: normal;
+    }
+    
+    .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+    
+    .file-input-wrapper input[type=file] {
+        position: absolute;
+        left: -9999px;
+    }
+    
+    .file-input-label {
+        display: block;
+        padding: 40px;
+        border: 2px dashed #417690;
+        border-radius: 6px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: #f8f9fa;
+    }
+    
+    .file-input-label:hover {
+        background: #e9ecef;
+        border-color: #2b5266;
+    }
+    
+    .file-input-label.dragover {
+        background: #d4edda;
+        border-color: #28a745;
+    }
+    
+    .selected-files {
+        margin-top: 20px;
+    }
+    
+    .file-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 4px;
+        margin-bottom: 8px;
+    }
+    
+    .file-item img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 12px;
+    }
+    
+    .file-item-info {
+        flex: 1;
+    }
+    
+    .file-item-name {
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .file-item-size {
+        font-size: 12px;
+        color: #666;
+    }
+    
+    .remove-file {
+        color: #dc3545;
+        cursor: pointer;
+        padding: 5px 10px;
+    }
+    
+    .submit-button {
+        background: #417690;
+        color: white;
+        padding: 14px 32px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .submit-button:hover {
+        background: #2b5266;
+    }
+    
+    .submit-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+    
+    .help-text {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+    }
+    
+    .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #417690;
+        text-decoration: none;
+    }
+    
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <a href="{% url 'admin:gallery_galleryalbum_changelist' %}" class="back-link">← Back to Albums</a>
+    
+    <h1>Create Album with Photos</h1>
+    <p style="color: #666; margin-bottom: 30px;">Create a new album and upload multiple photos in one step</p>
+    
+    <form method="post" enctype="multipart/form-data" id="createForm">
+        {% csrf_token %}
+        
+        <!-- Album Information Section -->
+        <div class="form-section">
+            <h2>📁 Album Information</h2>
+            
+            <div class="form-row">
+                <label for="id_title">Album Title *</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div class="help-text" style="color: #dc3545;">{{ form.title.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-row">
+                <label for="id_description">Description</label>
+                {{ form.description }}
+                <div class="help-text">Describe what this album is about</div>
+            </div>
+            
+            <div class="form-row">
+                <label for="id_date">Date *</label>
+                {{ form.date }}
+                <div class="help-text">When was this event/album from?</div>
+            </div>
+            
+            <div class="form-row">
+                <label for="id_cover_image">Cover Image (Optional)</label>
+                {{ form.cover_image }}
+                <div class="help-text">Upload a cover image for the album</div>
+            </div>
+            
+            <div class="checkbox-row">
+                {{ form.is_featured }}
+                <label for="id_is_featured">Featured Album (show on homepage)</label>
+            </div>
+            
+            <div class="checkbox-row">
+                {{ form.is_published }}
+                <label for="id_is_published">Published (visible to public)</label>
+            </div>
+        </div>
+        
+        <!-- Photos Section -->
+        <div class="form-section">
+            <h2>📷 Upload Photos</h2>
+            
+            <div class="form-row">
+                <label for="id_photographer">Photographer (Optional)</label>
+                {{ form.photographer }}
+                <div class="help-text">Name will be applied to all uploaded photos</div>
+            </div>
+            
+            <div class="form-row">
+                <label>Select Photos</label>
+                <div class="file-input-wrapper">
+                    {{ form.photos }}
+                    <label for="id_photos" class="file-input-label" id="dropZone">
+                        <div style="font-size: 48px; margin-bottom: 10px;">📷</div>
+                        <div style="font-size: 18px; font-weight: 500; margin-bottom: 5px;">
+                            Click to select photos or drag and drop
+                        </div>
+                        <div style="font-size: 14px; color: #666;">
+                            You can select multiple photos at once
+                        </div>
+                    </label>
+                </div>
+                <div class="selected-files" id="selectedFiles"></div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" class="submit-button" id="submitButton">
+                ✓ Create Album & Upload Photos
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const fileInput = document.getElementById('id_photos');
+    const dropZone = document.getElementById('dropZone');
+    const selectedFilesDiv = document.getElementById('selectedFiles');
+    const submitButton = document.getElementById('submitButton');
+    
+    let selectedFiles = [];
+    
+    // File input change
+    fileInput.addEventListener('change', handleFiles);
+    
+    // Drag and drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+    
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+    
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+        addFiles(files);
+    });
+    
+    function handleFiles(e) {
+        const files = Array.from(e.target.files);
+        addFiles(files);
+    }
+    
+    function addFiles(files) {
+        selectedFiles = [...selectedFiles, ...files];
+        displayFiles();
+    }
+    
+    function displayFiles() {
+        selectedFilesDiv.innerHTML = '';
+        
+        if (selectedFiles.length === 0) {
+            return;
+        }
+        
+        const heading = document.createElement('h3');
+        heading.textContent = `Selected Photos (${selectedFiles.length})`;
+        heading.style.marginTop = '20px';
+        heading.style.marginBottom = '10px';
+        selectedFilesDiv.appendChild(heading);
+        
+        selectedFiles.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            fileItem.appendChild(img);
+            
+            const info = document.createElement('div');
+            info.className = 'file-item-info';
+            
+            const name = document.createElement('div');
+            name.className = 'file-item-name';
+            name.textContent = file.name;
+            info.appendChild(name);
+            
+            const size = document.createElement('div');
+            size.className = 'file-item-size';
+            size.textContent = formatFileSize(file.size);
+            info.appendChild(size);
+            
+            fileItem.appendChild(info);
+            
+            const removeBtn = document.createElement('span');
+            removeBtn.className = 'remove-file';
+            removeBtn.textContent = '✕';
+            removeBtn.onclick = () => removeFile(index);
+            fileItem.appendChild(removeBtn);
+            
+            selectedFilesDiv.appendChild(fileItem);
+        });
+    }
+    
+    function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        displayFiles();
+        
+        // Update file input
+        const dt = new DataTransfer();
+        selectedFiles.forEach(file => dt.items.add(file));
+        fileInput.files = dt.files;
+    }
+    
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+</script>
+{% endblock %}

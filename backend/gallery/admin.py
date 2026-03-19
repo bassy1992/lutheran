@@ -3,12 +3,32 @@ from django.utils.html import format_html
 from django.urls import path
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django import forms
 from .models import GalleryAlbum, GalleryPhoto
+
+
+class BulkPhotoUploadForm(forms.Form):
+    """Form for creating album and uploading multiple photos at once"""
+    # Album fields
+    title = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'size': '60'}))
+    description = forms.CharField(widget=forms.Textarea(attrs={'rows': 3, 'cols': 60}), required=False)
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    cover_image = forms.ImageField(required=False, help_text="Optional: Album cover image")
+    is_featured = forms.BooleanField(required=False, initial=False)
+    is_published = forms.BooleanField(required=False, initial=True)
+    
+    # Photo fields
+    photos = forms.FileField(
+        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        required=False,
+        help_text="Select multiple photos to upload"
+    )
+    photographer = forms.CharField(max_length=100, required=False, help_text="Optional: Photographer name for all photos")
 
 
 class GalleryPhotoInline(admin.TabularInline):
     model = GalleryPhoto
-    extra = 1
+    extra = 0
     fields = ['image', 'title', 'photographer', 'order', 'is_featured', 'image_preview']
     readonly_fields = ['image_preview']
     
@@ -46,7 +66,7 @@ class GalleryAlbumAdmin(admin.ModelAdmin):
     
     def bulk_upload_link(self, obj):
         return format_html(
-            '<a class="button" href="{}">📤 Bulk Upload Photos</a>',
+            '<a class="button" href="{}">📤 Add More Photos</a>',
             f'/admin/gallery/galleryalbum/{obj.pk}/bulk-upload/'
         )
     bulk_upload_link.short_description = 'Actions'
@@ -54,9 +74,66 @@ class GalleryAlbumAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
+            path('create-with-photos/', self.admin_site.admin_view(self.create_with_photos_view), name='gallery_create_with_photos'),
             path('<int:album_id>/bulk-upload/', self.admin_site.admin_view(self.bulk_upload_view), name='gallery_album_bulk_upload'),
         ]
         return custom_urls + urls
+    
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['create_with_photos_url'] = 'create-with-photos/'
+        return super().changelist_view(request, extra_context)
+    
+    def create_with_photos_view(self, request):
+        """View to create album and upload photos in one step"""
+        if request.method == 'POST':
+            form = BulkPhotoUploadForm(request.POST, request.FILES)
+            
+            if form.is_valid():
+                # Create the album
+                album = GalleryAlbum.objects.create(
+                    title=form.cleaned_data['title'],
+                    description=form.cleaned_data['description'],
+                    date=form.cleaned_data['date'],
+                    cover_image=form.cleaned_data.get('cover_image'),
+                    is_featured=form.cleaned_data['is_featured'],
+                    is_published=form.cleaned_data['is_published']
+                )
+                
+                # Upload photos
+                files = request.FILES.getlist('photos')
+                photographer = form.cleaned_data.get('photographer', '')
+                
+                created_count = 0
+                for file in files:
+                    try:
+                        GalleryPhoto.objects.create(
+                            album=album,
+                            image=file,
+                            photographer=photographer,
+                            date_taken=album.date
+                        )
+                        created_count += 1
+                    except Exception as e:
+                        messages.error(request, f'Error uploading {file.name}: {str(e)}')
+                
+                if created_count > 0:
+                    messages.success(request, f'✓ Created album "{album.title}" with {created_count} photo(s)')
+                else:
+                    messages.success(request, f'✓ Created album "{album.title}"')
+                
+                return redirect('admin:gallery_galleryalbum_changelist')
+        else:
+            form = BulkPhotoUploadForm()
+        
+        context = {
+            'form': form,
+            'title': 'Create Album with Photos',
+            'opts': self.model._meta,
+            'has_view_permission': self.has_view_permission(request),
+        }
+        
+        return render(request, 'admin/gallery/create_with_photos.html', context)
     
     def bulk_upload_view(self, request, album_id):
         album = GalleryAlbum.objects.get(pk=album_id)
@@ -90,7 +167,7 @@ class GalleryAlbumAdmin(admin.ModelAdmin):
         
         context = {
             'album': album,
-            'title': f'Bulk Upload Photos to {album.title}',
+            'title': f'Add Photos to {album.title}',
             'opts': self.model._meta,
             'has_view_permission': self.has_view_permission(request),
         }
