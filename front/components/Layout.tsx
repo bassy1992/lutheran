@@ -6,7 +6,6 @@ import { Menu, X, Cross, Church, MapPin, Phone, Mail } from 'lucide-react';
 import { NAV_ITEMS, SOCIAL_LINKS } from '../constants';
 import { churchService } from '../src/services/api/endpoints/church.service';
 import { useLanguage } from '../src/contexts/LanguageContext';
-import LanguageSelector from './LanguageSelector';
 import type { ChurchInfo } from '../src/types/models';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -74,9 +73,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 {item.label}
               </Link>
             ))}
-            <div className="ml-2">
-              <LanguageSelector />
-            </div>
             <Link 
               to="/donate" 
               className="ml-2 px-5 py-2 rounded-lg font-semibold text-sm transition-all bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/30"
@@ -113,9 +109,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   {item.label}
                 </Link>
               ))}
-              <div className="px-4 py-2">
-                <LanguageSelector />
-              </div>
               <Link 
                 to="/donate" 
                 onClick={closeMenu}
