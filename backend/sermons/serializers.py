@@ -64,11 +64,12 @@ class ServiceHymnSerializer(serializers.ModelSerializer):
 class WeeklyBulletinSerializer(serializers.ModelSerializer):
     readings = BibleReadingSerializer(many=True, read_only=True)
     hymns = ServiceHymnSerializer(many=True, read_only=True)
+    pastor = PastorSerializer(read_only=True)
     
     class Meta:
         model = WeeklyBulletin
         fields = [
-            'id', 'title', 'service_date', 'is_active', 'has_communion',
+            'id', 'title', 'service_date', 'pastor', 'is_active', 'has_communion',
             'notes', 'readings', 'hymns', 'created_at', 'updated_at'
         ]
         read_only_fields = ['created_at', 'updated_at']

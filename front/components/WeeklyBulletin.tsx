@@ -26,6 +26,12 @@ interface WeeklyBulletin {
   id: number;
   title: string;
   service_date: string;
+  pastor?: {
+    id: number;
+    name: string;
+    role: string;
+    photo_display_url?: string;
+  };
   is_active: boolean;
   has_communion: boolean;
   notes: string;
@@ -98,6 +104,25 @@ const WeeklyBulletin: React.FC = () => {
           <h2 className="text-3xl font-bold">{bulletin.title}</h2>
         </div>
         <p className="text-blue-100 text-lg">{formatDate(bulletin.service_date)}</p>
+        
+        {/* Pastor Information */}
+        {bulletin.pastor && (
+          <div className="mt-6 flex items-center gap-4 bg-blue-700/30 rounded-xl p-4">
+            {bulletin.pastor.photo_display_url && (
+              <img
+                src={bulletin.pastor.photo_display_url}
+                alt={bulletin.pastor.name}
+                className="w-16 h-16 rounded-full object-cover border-2 border-white"
+              />
+            )}
+            <div>
+              <p className="text-sm text-blue-200 font-medium">Preaching Pastor</p>
+              <p className="text-xl font-bold">{bulletin.pastor.name}</p>
+              <p className="text-sm text-blue-200">{bulletin.pastor.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
+            </div>
+          </div>
+        )}
+        
         {bulletin.has_communion && (
           <div className="mt-4 inline-block bg-blue-500/30 px-4 py-2 rounded-lg">
             <p className="text-sm font-semibold">Holy Communion will be celebrated</p>

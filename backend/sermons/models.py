@@ -67,6 +67,7 @@ class WeeklyBulletin(models.Model):
     """Weekly Service Bulletin/Order of Worship"""
     title = models.CharField(max_length=200, help_text="e.g., 'Third Sunday in Lent'")
     service_date = models.DateField(help_text="Date of the service")
+    pastor = models.ForeignKey(Pastor, on_delete=models.SET_NULL, null=True, blank=True, related_name='bulletins', help_text="Pastor preaching this week")
     is_active = models.BooleanField(default=True, help_text="Set to True for current week's bulletin")
     has_communion = models.BooleanField(default=False, help_text="Check if communion will be served")
     notes = models.TextField(blank=True, help_text="Additional notes or announcements")
