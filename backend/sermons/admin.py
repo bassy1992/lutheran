@@ -22,13 +22,14 @@ class SermonAdmin(admin.ModelAdmin):
 class BibleReadingInline(admin.TabularInline):
     model = BibleReading
     extra = 5
-    fields = ['reading_type', 'reader_name', 'reader_photo', 'scripture_reference', 'order']
+    fields = ['reading_type', 'reader_name', 'reader_photo', 'reader_photo_url', 'scripture_reference', 'order']
+    readonly_fields = []
 
 
 class ServiceHymnInline(admin.TabularInline):
     model = ServiceHymn
     extra = 4
-    fields = ['hymn_type', 'hymn_number', 'hymn_title', 'order']
+    fields = ['hymn_type', 'custom_hymn_type', 'hymn_number', 'hymn_title', 'order']
 
 
 @admin.register(WeeklyBulletin)

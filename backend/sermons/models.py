@@ -79,7 +79,8 @@ class BibleReading(models.Model):
     bulletin = models.ForeignKey(WeeklyBulletin, on_delete=models.CASCADE, related_name='readings')
     reading_type = models.CharField(max_length=20, choices=READING_TYPE_CHOICES)
     reader_name = models.CharField(max_length=200)
-    reader_photo = models.URLField(blank=True, null=True, help_text="URL to reader's photo")
+    reader_photo = models.ImageField(upload_to='readers/', blank=True, null=True, help_text="Upload reader's photo")
+    reader_photo_url = models.URLField(blank=True, null=True, help_text="Or provide photo URL")
     scripture_reference = models.CharField(max_length=200, help_text="e.g., 'Genesis 1:1-2'")
     order = models.IntegerField(default=0, help_text="Display order")
     
@@ -90,6 +91,13 @@ class BibleReading(models.Model):
     
     def __str__(self):
         return f"{self.get_reading_type_display()} - {self.reader_name}"
+    
+    @property
+    def photo_url(self):
+        """Return photo URL, prioritizing uploaded file over URL field"""
+        if self.reader_photo:
+            return self.reader_photo.url
+        return self.reader_photo_url
 
 
 class ServiceHymn(models.Model):
@@ -99,10 +107,12 @@ class ServiceHymn(models.Model):
         ('communion', 'Communion Hymn'),
         ('closing', 'Closing Hymn'),
         ('recessional', 'Recessional Hymn'),
+        ('other', 'Other'),
     ]
     
     bulletin = models.ForeignKey(WeeklyBulletin, on_delete=models.CASCADE, related_name='hymns')
     hymn_type = models.CharField(max_length=20, choices=HYMN_TYPE_CHOICES)
+    custom_hymn_type = models.CharField(max_length=100, blank=True, help_text="Custom hymn type (if 'Other' is selected)")
     hymn_number = models.CharField(max_length=50, blank=True, help_text="Hymn number from hymnal")
     hymn_title = models.CharField(max_length=200)
     order = models.IntegerField(default=0, help_text="Display order")
@@ -113,4 +123,12 @@ class ServiceHymn(models.Model):
         verbose_name_plural = 'Service Hymns'
     
     def __str__(self):
-        return f"{self.get_hymn_type_display()} - {self.hymn_title}"
+        hymn_type_display = self.custom_hymn_type if self.hymn_type == 'other' and self.custom_hymn_type else self.get_hymn_type_display()
+        return f"{hymn_type_display} - {self.hymn_title}"
+    
+    @property
+    def display_type(self):
+        """Return custom type if 'other' is selected, otherwise return choice display"""
+        if self.hymn_type == 'other' and self.custom_hymn_type:
+            return self.custom_hymn_type
+        return self.get_hymn_type_display()

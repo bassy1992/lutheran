@@ -61,3 +61,8 @@ class WeeklyBulletinViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(is_active=True)
         
         return queryset
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context

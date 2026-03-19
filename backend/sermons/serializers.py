@@ -32,23 +32,32 @@ class SermonSerializer(serializers.ModelSerializer):
 
 class BibleReadingSerializer(serializers.ModelSerializer):
     reading_type_display = serializers.CharField(source='get_reading_type_display', read_only=True)
+    photo_url = serializers.SerializerMethodField()
     
     class Meta:
         model = BibleReading
         fields = [
             'id', 'reading_type', 'reading_type_display', 'reader_name',
-            'reader_photo', 'scripture_reference', 'order'
+            'photo_url', 'scripture_reference', 'order'
         ]
+    
+    def get_photo_url(self, obj):
+        if obj.reader_photo:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.reader_photo.url)
+            return obj.reader_photo.url
+        return obj.reader_photo_url
 
 
 class ServiceHymnSerializer(serializers.ModelSerializer):
-    hymn_type_display = serializers.CharField(source='get_hymn_type_display', read_only=True)
+    hymn_type_display = serializers.CharField(source='display_type', read_only=True)
     
     class Meta:
         model = ServiceHymn
         fields = [
-            'id', 'hymn_type', 'hymn_type_display', 'hymn_number',
-            'hymn_title', 'order'
+            'id', 'hymn_type', 'hymn_type_display', 'custom_hymn_type',
+            'hymn_number', 'hymn_title', 'order'
         ]
 
 

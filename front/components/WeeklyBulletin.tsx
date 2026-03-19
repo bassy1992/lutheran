@@ -7,7 +7,7 @@ interface BibleReading {
   reading_type: string;
   reading_type_display: string;
   reader_name: string;
-  reader_photo: string | null;
+  photo_url: string | null;
   scripture_reference: string;
   order: number;
 }
@@ -16,6 +16,7 @@ interface ServiceHymn {
   id: number;
   hymn_type: string;
   hymn_type_display: string;
+  custom_hymn_type?: string;
   hymn_number: string;
   hymn_title: string;
   order: number;
@@ -116,9 +117,9 @@ const WeeklyBulletin: React.FC = () => {
             <div key={reading.id} className="border border-slate-200 rounded-xl p-6 hover:shadow-md transition-shadow">
               <h4 className="font-bold text-lg text-blue-700 mb-3">{reading.reading_type_display}</h4>
               
-              {reading.reader_photo && (
+              {reading.photo_url && (
                 <img
-                  src={reading.reader_photo}
+                  src={reading.photo_url}
                   alt={reading.reader_name}
                   className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-blue-200"
                 />
