@@ -34,6 +34,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,.railway.ap
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -143,8 +144,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise configuration
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise configuration - use simpler storage to avoid collectstatic issues
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media files (User uploaded content)
 MEDIA_URL = '/media/'
@@ -204,3 +205,191 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+
+# Jazzmin Admin Theme Configuration
+JAZZMIN_SETTINGS = {
+    # Title on the login screen and header
+    "site_title": "Church Admin",
+    "site_header": "Church Management",
+    "site_brand": "Church Admin Portal",
+    
+    # Logo to use for your site
+    "site_logo": None,  # Add your logo path here if you have one
+    "login_logo": None,
+    
+    # Logo to use for your site, must be present in static files
+    "site_logo_classes": "img-circle",
+    
+    # Welcome text on the login screen
+    "welcome_sign": "Welcome to Church Admin Portal",
+    
+    # Copyright on the footer
+    "copyright": "Church Management System",
+    
+    # The model admin to search from the search bar
+    "search_model": "auth.User",
+    
+    # Field name on user model that contains avatar
+    "user_avatar": None,
+    
+    ############
+    # Top Menu #
+    ############
+    
+    # Links to put along the top menu
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "View Site", "url": "/", "new_window": True},
+        {"model": "auth.User"},
+        {"app": "church"},
+    ],
+    
+    #############
+    # User Menu #
+    #############
+    
+    # Additional links to include in the user menu
+    "usermenu_links": [
+        {"model": "auth.user"}
+    ],
+    
+    #############
+    # Side Menu #
+    #############
+    
+    # Whether to display the side menu
+    "show_sidebar": True,
+    
+    # Whether to aut expand the menu
+    "navigation_expanded": True,
+    
+    # Hide these apps when generating side menu
+    "hide_apps": [],
+    
+    # Hide these models when generating side menu
+    "hide_models": [],
+    
+    # List of apps (and/or models) to base side menu ordering off of
+    "order_with_respect_to": [
+        "church",
+        "events", 
+        "sermons",
+        "members",
+        "donations",
+        "gallery",
+        "auth"
+    ],
+    
+    # Custom links to append to app groups
+    "custom_links": {
+        "church": [{
+            "name": "Church Info", 
+            "url": "admin:church_churchinfo_changelist", 
+            "icon": "fas fa-church",
+            "permissions": ["church.view_churchinfo"]
+        }]
+    },
+    
+    # Custom icons for side menu apps/models
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        
+        "church": "fas fa-church",
+        "church.ChurchInfo": "fas fa-info-circle",
+        "church.Pastor": "fas fa-user-tie",
+        "church.CoreValue": "fas fa-heart",
+        "church.ServiceTime": "fas fa-clock",
+        
+        "events": "fas fa-calendar-alt",
+        "events.Event": "fas fa-calendar-check",
+        "events.EventRegistration": "fas fa-user-check",
+        
+        "sermons": "fas fa-bible",
+        "sermons.Sermon": "fas fa-book-open",
+        "sermons.WeeklyBulletin": "fas fa-newspaper",
+        "sermons.ServiceHymn": "fas fa-music",
+        "sermons.BibleReading": "fas fa-book-reader",
+        
+        "members": "fas fa-users",
+        "members.Member": "fas fa-user-friends",
+        "members.Ministry": "fas fa-hands-helping",
+        
+        "donations": "fas fa-hand-holding-usd",
+        "donations.DonationCategory": "fas fa-list",
+        
+        "gallery": "fas fa-images",
+        "gallery.GalleryAlbum": "fas fa-folder-open",
+        "gallery.GalleryPhoto": "fas fa-image",
+    },
+    
+    # Icons that are used when one is not manually specified
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    
+    #################
+    # Related Modal #
+    #################
+    
+    # Use modals instead of popups
+    "related_modal_active": False,
+    
+    #############
+    # UI Tweaks #
+    #############
+    
+    # Relative paths to custom CSS/JS scripts (must be present in static files)
+    "custom_css": None,
+    "custom_js": None,
+    
+    # Whether to show the UI customizer on the sidebar
+    "show_ui_builder": False,
+    
+    ###############
+    # Change view #
+    ###############
+    
+    # Render out the change view as a single form, or in tabs
+    "changeform_format": "horizontal_tabs",
+    
+    # Override change forms on a per modeladmin basis
+    "changeform_format_overrides": {
+        "auth.user": "collapsible",
+        "auth.group": "vertical_tabs"
+    },
+}
+
+# Jazzmin UI Tweaks
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar": "navbar-white navbar-light",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": False,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "default",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}
