@@ -207,7 +207,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               </li>
               <li className="flex justify-between border-b border-slate-800 pb-2">
                 <span>Bible Study</span>
-                <span className="text-blue-400">Wed 6:00 PM</span>
+                <span className="text-blue-400">Thu 6:00 PM</span>
               </li>
               <li className="flex justify-between border-b border-slate-800 pb-2">
                 <span>Prayer Meeting</span>
