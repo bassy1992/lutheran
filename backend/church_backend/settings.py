@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'django_filters',
+    'storages',
     'events',
     'church',
     'members',
@@ -151,8 +152,7 @@ STATICFILES_DIRS = [
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media files (User uploaded content)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Configuration moved to bottom of file for DigitalOcean Spaces support
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -397,3 +397,39 @@ JAZZMIN_UI_TWEAKS = {
         "success": "btn-success"
     }
 }
+
+
+# DigitalOcean Spaces Configuration
+USE_SPACES = config('USE_SPACES', default=False, cast=bool)
+
+if USE_SPACES:
+    # DigitalOcean Spaces settings
+    AWS_ACCESS_KEY_ID = config('DO_SPACES_KEY')
+    AWS_SECRET_ACCESS_KEY = config('DO_SPACES_SECRET')
+    AWS_STORAGE_BUCKET_NAME = config('DO_SPACES_BUCKET_NAME')
+    AWS_S3_ENDPOINT_URL = config('DO_SPACES_ENDPOINT_URL')  # e.g., https://nyc3.digitaloceanspaces.com
+    AWS_S3_REGION_NAME = config('DO_SPACES_REGION', default='nyc3')
+    
+    # Custom domain for CDN (optional)
+    AWS_S3_CUSTOM_DOMAIN = config('DO_SPACES_CDN_DOMAIN', default=None)
+    
+    # S3 settings
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_LOCATION = 'media'
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_FILE_OVERWRITE = False
+    
+    # Media files configuration
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    
+    if AWS_S3_CUSTOM_DOMAIN:
+        MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+    else:
+        MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION}/'
+else:
+    # Local media files (development)
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
