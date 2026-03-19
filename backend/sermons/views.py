@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from django.db.models import Q
-from .models import SermonSeries, Sermon
-from .serializers import SermonSeriesSerializer, SermonSerializer
+from .models import SermonSeries, Sermon, WeeklyBulletin
+from .serializers import SermonSeriesSerializer, SermonSerializer, WeeklyBulletinSerializer
 
 
 class SermonSeriesViewSet(viewsets.ReadOnlyModelViewSet):
@@ -43,5 +43,21 @@ class SermonViewSet(viewsets.ReadOnlyModelViewSet):
                 Q(scripture_reference__icontains=search) |
                 Q(description__icontains=search)
             )
+        
+        return queryset
+
+
+class WeeklyBulletinViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = WeeklyBulletin.objects.all()
+    serializer_class = WeeklyBulletinSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Filter by active (current week)
+        is_active = self.request.query_params.get('is_active')
+        if is_active:
+            queryset = queryset.filter(is_active=True)
         
         return queryset

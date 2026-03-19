@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SermonSeries, Sermon
+from .models import SermonSeries, Sermon, WeeklyBulletin, BibleReading, ServiceHymn
 
 
 @admin.register(SermonSeries)
@@ -17,3 +17,34 @@ class SermonAdmin(admin.ModelAdmin):
     search_fields = ['title', 'scripture_reference', 'description']
     date_hierarchy = 'date_preached'
     ordering = ['-date_preached']
+
+
+class BibleReadingInline(admin.TabularInline):
+    model = BibleReading
+    extra = 5
+    fields = ['reading_type', 'reader_name', 'reader_photo', 'scripture_reference', 'order']
+
+
+class ServiceHymnInline(admin.TabularInline):
+    model = ServiceHymn
+    extra = 4
+    fields = ['hymn_type', 'hymn_number', 'hymn_title', 'order']
+
+
+@admin.register(WeeklyBulletin)
+class WeeklyBulletinAdmin(admin.ModelAdmin):
+    list_display = ['title', 'service_date', 'is_active', 'has_communion', 'created_at']
+    list_filter = ['is_active', 'has_communion', 'service_date']
+    search_fields = ['title', 'notes']
+    date_hierarchy = 'service_date'
+    inlines = [BibleReadingInline, ServiceHymnInline]
+    
+    fieldsets = (
+        ('Service Information', {
+            'fields': ('title', 'service_date', 'is_active', 'has_communion')
+        }),
+        ('Additional Notes', {
+            'fields': ('notes',),
+            'classes': ('collapse',)
+        }),
+    )

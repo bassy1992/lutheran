@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import SermonSeries, Sermon
+from .models import SermonSeries, Sermon, WeeklyBulletin, BibleReading, ServiceHymn
 from church.serializers import PastorSerializer
 
 
@@ -28,3 +28,38 @@ class SermonSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at'
         ]
         read_only_fields = ['view_count', 'download_count', 'created_at', 'updated_at']
+
+
+class BibleReadingSerializer(serializers.ModelSerializer):
+    reading_type_display = serializers.CharField(source='get_reading_type_display', read_only=True)
+    
+    class Meta:
+        model = BibleReading
+        fields = [
+            'id', 'reading_type', 'reading_type_display', 'reader_name',
+            'reader_photo', 'scripture_reference', 'order'
+        ]
+
+
+class ServiceHymnSerializer(serializers.ModelSerializer):
+    hymn_type_display = serializers.CharField(source='get_hymn_type_display', read_only=True)
+    
+    class Meta:
+        model = ServiceHymn
+        fields = [
+            'id', 'hymn_type', 'hymn_type_display', 'hymn_number',
+            'hymn_title', 'order'
+        ]
+
+
+class WeeklyBulletinSerializer(serializers.ModelSerializer):
+    readings = BibleReadingSerializer(many=True, read_only=True)
+    hymns = ServiceHymnSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = WeeklyBulletin
+        fields = [
+            'id', 'title', 'service_date', 'is_active', 'has_communion',
+            'notes', 'readings', 'hymns', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['created_at', 'updated_at']
