@@ -41,7 +41,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-900 shadow-lg py-3' : 'bg-slate-900/95 py-5'}`}>
         <div className="container mx-auto px-4 md:px-8 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2 group" onClick={closeMenu}>
-            <div className={`p-1.5 rounded-lg bg-blue-600 text-white transform group-hover:rotate-12 transition-transform`}>
+            <img 
+              src="/logo.png" 
+              alt="Trinity Lutheran Church" 
+              className="h-12 w-12 object-contain"
+              onError={(e) => {
+                // Fallback to icon if image fails to load
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+            <div className="p-1.5 rounded-lg bg-blue-600 text-white transform group-hover:rotate-12 transition-transform hidden">
               <Church size={24} />
             </div>
             <div>
@@ -117,7 +127,16 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="container mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 border-b border-slate-800 pb-16">
           <div className="space-y-6">
             <Link to="/" className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-blue-700 text-white">
+              <img 
+                src="/logo.png" 
+                alt="Trinity Lutheran Church" 
+                className="h-10 w-10 object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+              <div className="p-1.5 rounded-lg bg-blue-700 text-white hidden">
                 <Church size={24} />
               </div>
               <span className="font-bold text-xl text-white">TRINITY LUTHERAN</span>
