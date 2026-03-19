@@ -139,7 +139,7 @@ const Home: React.FC = () => {
       <section className="relative h-screen min-h-[600px] flex items-center justify-center text-white overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://picsum.photos/seed/ghana-church/1920/1080" 
+            src="/HERO.jpeg" 
             alt="Trinity Lutheran Ghana" 
             className="w-full h-full object-cover"
           />

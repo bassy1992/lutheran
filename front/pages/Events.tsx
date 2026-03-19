@@ -184,7 +184,7 @@ const Events: React.FC = () => {
       <section className="relative h-[400px] flex items-center justify-center text-white overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://picsum.photos/seed/events-hero/1920/600" 
+            src="/HERO.jpeg" 
             alt="Church Events" 
             className="w-full h-full object-cover"
           />

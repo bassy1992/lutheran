@@ -377,7 +377,7 @@ const EventCalendarPage: React.FC = () => {
       <section className="relative h-[300px] flex items-center justify-center text-white overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://picsum.photos/seed/calendar-hero/1920/600"
+            src="/HERO.jpeg"
             alt="Event Calendar"
             className="w-full h-full object-cover"
           />

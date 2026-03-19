@@ -220,7 +220,7 @@ const Donate: React.FC = () => {
         <section className="relative h-[300px] flex items-center justify-center text-white overflow-hidden">
           <div className="absolute inset-0 z-0">
             <img 
-              src="https://picsum.photos/seed/donate-success/1920/600" 
+              src="/HERO.jpeg" 
               alt="Thank You" 
               className="w-full h-full object-cover"
             />
@@ -279,7 +279,7 @@ const Donate: React.FC = () => {
       <section className="relative h-[500px] flex items-center justify-center text-white overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://picsum.photos/seed/donate-hero/1920/600" 
+            src="/HERO.jpeg" 
             alt="Support Our Mission" 
             className="w-full h-full object-cover"
           />
