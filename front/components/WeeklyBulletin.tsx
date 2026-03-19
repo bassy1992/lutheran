@@ -32,6 +32,7 @@ interface WeeklyBulletin {
     role: string;
     photo_display_url?: string;
   };
+  psalm_of_the_day?: string;
   is_active: boolean;
   has_communion: boolean;
   notes: string;
@@ -136,6 +137,19 @@ const WeeklyBulletin: React.FC = () => {
           <Book className="w-6 h-6 text-blue-700" />
           <h3 className="text-2xl font-bold">Bible Readings</h3>
         </div>
+        
+        {/* Psalm of the Day */}
+        {bulletin.psalm_of_the_day && (
+          <div className="mb-6 bg-gradient-to-r from-blue-50 to-blue-100 border-l-4 border-blue-600 rounded-lg p-6">
+            <div className="flex items-center gap-3">
+              <Book className="w-6 h-6 text-blue-700" />
+              <div>
+                <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide">Psalm of the Day</p>
+                <p className="text-xl font-bold text-slate-900">{bulletin.psalm_of_the_day}</p>
+              </div>
+            </div>
+          </div>
+        )}
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {bulletin.readings.map((reading) => (

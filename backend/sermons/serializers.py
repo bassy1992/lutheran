@@ -69,7 +69,7 @@ class WeeklyBulletinSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeeklyBulletin
         fields = [
-            'id', 'title', 'service_date', 'pastor', 'is_active', 'has_communion',
+            'id', 'title', 'service_date', 'pastor', 'psalm_of_the_day', 'is_active', 'has_communion',
             'notes', 'readings', 'hymns', 'created_at', 'updated_at'
         ]
         read_only_fields = ['created_at', 'updated_at']
