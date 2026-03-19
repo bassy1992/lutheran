@@ -5,7 +5,8 @@ from church.models import Pastor
 class SermonSeries(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    image = models.URLField(blank=True, null=True)
+    image = models.ImageField(upload_to='sermon_series/', blank=True, null=True, help_text="Upload series image")
+    image_url = models.URLField(blank=True, null=True, help_text="Or provide image URL")
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -20,6 +21,13 @@ class SermonSeries(models.Model):
     @property
     def sermon_count(self):
         return self.sermons.count()
+    
+    @property
+    def image_display_url(self):
+        """Return image URL, prioritizing uploaded file over URL field"""
+        if self.image:
+            return self.image.url
+        return self.image_url
 
 
 class Sermon(models.Model):
@@ -31,7 +39,8 @@ class Sermon(models.Model):
     date_preached = models.DateField()
     audio_file = models.URLField(blank=True, null=True)
     video_url = models.URLField(blank=True)
-    thumbnail = models.URLField(blank=True, null=True)
+    thumbnail = models.ImageField(upload_to='sermon_thumbnails/', blank=True, null=True, help_text="Upload sermon thumbnail")
+    thumbnail_url = models.URLField(blank=True, null=True, help_text="Or provide thumbnail URL")
     duration = models.CharField(max_length=20, blank=True, null=True)
     view_count = models.IntegerField(default=0)
     download_count = models.IntegerField(default=0)
@@ -45,6 +54,13 @@ class Sermon(models.Model):
     
     def __str__(self):
         return self.title
+    
+    @property
+    def thumbnail_display_url(self):
+        """Return thumbnail URL, prioritizing uploaded file over URL field"""
+        if self.thumbnail:
+            return self.thumbnail.url
+        return self.thumbnail_url
 
 
 class WeeklyBulletin(models.Model):

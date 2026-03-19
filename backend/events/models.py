@@ -19,7 +19,8 @@ class Event(models.Model):
     end_date = models.DateTimeField()
     location = models.CharField(max_length=200)
     address = models.TextField()
-    image = models.URLField(blank=True, null=True)
+    image = models.ImageField(upload_to='events/', blank=True, null=True, help_text="Upload event image")
+    image_url = models.URLField(blank=True, null=True, help_text="Or provide image URL")
     max_attendees = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(1)])
     registration_required = models.BooleanField(default=False)
     registration_deadline = models.DateTimeField(null=True, blank=True)
@@ -33,6 +34,13 @@ class Event(models.Model):
     
     def __str__(self):
         return self.title
+    
+    @property
+    def image_display_url(self):
+        """Return image URL, prioritizing uploaded file over URL field"""
+        if self.image:
+            return self.image.url
+        return self.image_url
     
     @property
     def attendee_count(self):

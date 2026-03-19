@@ -12,7 +12,8 @@ class ChurchInfo(models.Model):
     email = models.EmailField()
     website = models.URLField(blank=True)
     founded_year = models.IntegerField(null=True, blank=True)
-    logo = models.URLField(blank=True, null=True)
+    logo = models.ImageField(upload_to='church/', blank=True, null=True, help_text="Upload church logo")
+    logo_url = models.URLField(blank=True, null=True, help_text="Or provide logo URL")
     facebook_url = models.URLField(blank=True)
     twitter_url = models.URLField(blank=True)
     instagram_url = models.URLField(blank=True)
@@ -26,6 +27,13 @@ class ChurchInfo(models.Model):
     
     def __str__(self):
         return self.name
+    
+    @property
+    def logo_display_url(self):
+        """Return logo URL, prioritizing uploaded file over URL field"""
+        if self.logo:
+            return self.logo.url
+        return self.logo_url
 
 
 class Pastor(models.Model):
@@ -39,7 +47,8 @@ class Pastor(models.Model):
     name = models.CharField(max_length=200)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     bio = models.TextField()
-    photo = models.URLField(blank=True, null=True)
+    photo = models.ImageField(upload_to='pastors/', blank=True, null=True, help_text="Upload pastor photo")
+    photo_url = models.URLField(blank=True, null=True, help_text="Or provide photo URL")
     email = models.EmailField()
     phone = models.CharField(max_length=20)
     joined_date = models.DateField()
@@ -51,6 +60,13 @@ class Pastor(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.get_role_display()}"
+    
+    @property
+    def photo_display_url(self):
+        """Return photo URL, prioritizing uploaded file over URL field"""
+        if self.photo:
+            return self.photo.url
+        return self.photo_url
 
 
 class ServiceTime(models.Model):

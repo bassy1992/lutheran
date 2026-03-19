@@ -25,7 +25,8 @@ class Member(models.Model):
     address = models.TextField(blank=True)
     city = models.CharField(max_length=100, blank=True)
     country = models.CharField(max_length=100, default='Ghana')
-    photo = models.URLField(blank=True, null=True)
+    photo = models.ImageField(upload_to='members/', blank=True, null=True, help_text="Upload member photo")
+    photo_url = models.URLField(blank=True, null=True, help_text="Or provide photo URL")
     membership_status = models.CharField(max_length=20, choices=MEMBERSHIP_STATUS, default='visitor')
     joined_date = models.DateField(auto_now_add=True)
     baptism_date = models.DateField(null=True, blank=True)
@@ -40,13 +41,21 @@ class Member(models.Model):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+    
+    @property
+    def photo_display_url(self):
+        """Return photo URL, prioritizing uploaded file over URL field"""
+        if self.photo:
+            return self.photo.url
+        return self.photo_url
 
 
 class Ministry(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     leader = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, blank=True, related_name='led_ministries')
-    image = models.URLField(blank=True, null=True)
+    image = models.ImageField(upload_to='ministries/', blank=True, null=True, help_text="Upload ministry image")
+    image_url = models.URLField(blank=True, null=True, help_text="Or provide image URL")
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -60,6 +69,13 @@ class Ministry(models.Model):
     @property
     def member_count(self):
         return self.members.count()
+    
+    @property
+    def image_display_url(self):
+        """Return image URL, prioritizing uploaded file over URL field"""
+        if self.image:
+            return self.image.url
+        return self.image_url
 
 
 class MinistryMembership(models.Model):
