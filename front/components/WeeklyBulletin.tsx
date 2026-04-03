@@ -71,18 +71,18 @@ const WeeklyBulletin: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-12 h-12 text-blue-700 animate-spin" />
+      <div className="flex items-center justify-center py-12 md:py-20">
+        <Loader2 className="w-8 h-8 md:w-12 md:h-12 text-blue-700 animate-spin" />
       </div>
     );
   }
 
   if (error || !bulletin) {
     return (
-      <div className="text-center py-20">
-        <AlertCircle className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-        <h3 className="text-2xl font-bold text-slate-900 mb-2">No Bulletin Available</h3>
-        <p className="text-slate-600">{error || 'Check back later for this week\'s service bulletin'}</p>
+      <div className="text-center py-12 md:py-20">
+        <AlertCircle className="w-12 h-12 md:w-16 md:h-16 text-slate-300 mx-auto mb-3 md:mb-4" />
+        <h3 className="text-lg md:text-2xl font-bold text-slate-900 mb-2">No Bulletin Available</h3>
+        <p className="text-sm md:text-base text-slate-600">{error || 'Check back later for this week\'s service bulletin'}</p>
       </div>
     );
   }
@@ -97,114 +97,135 @@ const WeeklyBulletin: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-2xl p-8 shadow-lg">
-        <div className="flex items-center gap-3 mb-4">
-          <Calendar className="w-8 h-8" />
-          <h2 className="text-3xl font-bold">{bulletin.title}</h2>
-        </div>
-        <p className="text-blue-100 text-lg">{formatDate(bulletin.service_date)}</p>
-        
-        {/* Pastor Information */}
-        {bulletin.pastor && (
-          <div className="mt-6 flex items-center gap-4 bg-blue-700/30 rounded-xl p-4">
-            {bulletin.pastor.photo_display_url && (
-              <img
-                src={bulletin.pastor.photo_display_url}
-                alt={bulletin.pastor.name}
-                className="w-16 h-16 rounded-full object-cover border-2 border-white"
-              />
-            )}
-            <div>
-              <p className="text-sm text-blue-200 font-medium">Preaching Pastor</p>
-              <p className="text-xl font-bold">{bulletin.pastor.name}</p>
-              <p className="text-sm text-blue-200">{bulletin.pastor.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
-            </div>
-          </div>
-        )}
-        
-        {bulletin.has_communion && (
-          <div className="mt-4 inline-block bg-blue-500/30 px-4 py-2 rounded-lg">
-            <p className="text-sm font-semibold">Holy Communion will be celebrated</p>
-          </div>
-        )}
-      </div>
-
-      {/* Bible Readings */}
-      <div className="bg-white rounded-2xl shadow-lg p-8">
-        <div className="flex items-center gap-3 mb-6">
-          <Book className="w-6 h-6 text-blue-700" />
-          <h3 className="text-2xl font-bold">Bible Readings</h3>
-        </div>
-        
-        {/* Psalm of the Day */}
-        {bulletin.psalm_of_the_day && (
-          <div className="mb-6 bg-gradient-to-r from-blue-50 to-blue-100 border-l-4 border-blue-600 rounded-lg p-6">
-            <div className="flex items-center gap-3">
-              <Book className="w-6 h-6 text-blue-700" />
-              <div>
-                <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide">Psalm of the Day</p>
-                <p className="text-xl font-bold text-slate-900">{bulletin.psalm_of_the_day}</p>
+    <div className="max-w-5xl mx-auto">
+      {/* Compact Header Card */}
+      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white rounded-xl md:rounded-2xl shadow-xl overflow-hidden mb-4 md:mb-6">
+        <div className="p-4 md:p-6">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1.5">
+                <Calendar className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-xs md:text-sm text-blue-200 font-medium">This Week's Service</span>
               </div>
+              <h2 className="text-xl md:text-3xl font-bold mb-1">{bulletin.title}</h2>
+              <p className="text-sm md:text-base text-blue-100">{formatDate(bulletin.service_date)}</p>
             </div>
+            {bulletin.has_communion && (
+              <div className="bg-yellow-400/20 border border-yellow-300/30 px-2.5 py-1 md:px-3 md:py-1.5 rounded-lg backdrop-blur-sm">
+                <p className="text-[10px] md:text-xs font-bold text-yellow-100 whitespace-nowrap">🍷 Holy Communion</p>
+              </div>
+            )}
           </div>
-        )}
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {bulletin.readings.map((reading) => (
-            <div key={reading.id} className="border border-slate-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-              <h4 className="font-bold text-lg text-blue-700 mb-3">{reading.reading_type_display}</h4>
-              
-              {reading.photo_url && (
+          
+          {/* Pastor Info - Inline */}
+          {bulletin.pastor && (
+            <div className="flex items-center gap-2.5 md:gap-3 bg-white/10 backdrop-blur-sm rounded-lg p-2.5 md:p-3 border border-white/20">
+              {bulletin.pastor.photo_display_url && (
                 <img
-                  src={reading.photo_url}
-                  alt={reading.reader_name}
-                  className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-blue-200"
+                  src={bulletin.pastor.photo_display_url}
+                  alt={bulletin.pastor.name}
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border-2 border-white/50"
                 />
               )}
-              
-              <div className="text-center space-y-2">
-                <div className="flex items-center justify-center gap-2 text-slate-700">
-                  <User className="w-4 h-4" />
-                  <p className="font-semibold">{reading.reader_name}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] md:text-xs text-blue-200 font-medium">Preaching Today</p>
+                <p className="text-sm md:text-base font-bold truncate">{bulletin.pastor.name}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Two Column Layout for Desktop */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        {/* Left Column */}
+        <div className="space-y-4 md:space-y-6">
+          {/* Psalm of the Day - Featured */}
+          {bulletin.psalm_of_the_day && (
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl md:rounded-2xl p-4 md:p-5 shadow-md">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                  <Book className="w-4 h-4 md:w-5 md:h-5 text-white" />
                 </div>
-                <p className="text-slate-600 text-sm font-medium">{reading.scripture_reference}</p>
+                <div>
+                  <p className="text-[10px] md:text-xs font-bold text-amber-700 uppercase tracking-wider">Psalm of the Day</p>
+                  <p className="text-lg md:text-2xl font-bold text-amber-900">{bulletin.psalm_of_the_day}</p>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+          )}
 
-      {/* Hymns */}
-      <div className="bg-white rounded-2xl shadow-lg p-8">
-        <div className="flex items-center gap-3 mb-6">
-          <Music className="w-6 h-6 text-blue-700" />
-          <h3 className="text-2xl font-bold">Hymns</h3>
-        </div>
-        
-        <div className="grid md:grid-cols-2 gap-4">
-          {bulletin.hymns.map((hymn) => (
-            <div key={hymn.id} className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
-              <div className="flex-shrink-0 w-12 h-12 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold">
-                {hymn.hymn_number || <Music className="w-6 h-6" />}
-              </div>
-              <div className="flex-1">
-                <p className="text-sm text-slate-600 font-medium">{hymn.hymn_type_display}</p>
-                <p className="font-bold text-slate-900">{hymn.hymn_title}</p>
-              </div>
+          {/* Bible Readings */}
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-md p-4 md:p-5">
+            <div className="flex items-center gap-2 mb-3 md:mb-4">
+              <Book className="w-4 h-4 md:w-5 md:h-5 text-blue-700" />
+              <h3 className="text-base md:text-lg font-bold text-slate-900">Scripture Readings</h3>
             </div>
-          ))}
+            
+            <div className="space-y-2.5 md:space-y-3">
+              {bulletin.readings.map((reading) => (
+                <div key={reading.id} className="flex items-start gap-3 p-2.5 md:p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors border border-slate-200">
+                  {reading.photo_url && (
+                    <img
+                      src={reading.photo_url}
+                      alt={reading.reader_name}
+                      className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border-2 border-blue-200 flex-shrink-0"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-0.5">
+                      <span className="text-[10px] md:text-xs font-bold text-blue-700 uppercase tracking-wide">{reading.reading_type_display}</span>
+                      <span className="text-[10px] md:text-xs text-slate-500 font-medium">{reading.scripture_reference}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <User className="w-3 h-3 text-slate-400" />
+                      <p className="text-xs md:text-sm font-semibold text-slate-700">{reading.reader_name}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-4 md:space-y-6">
+          {/* Hymns */}
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-md p-4 md:p-5">
+            <div className="flex items-center gap-2 mb-3 md:mb-4">
+              <Music className="w-4 h-4 md:w-5 md:h-5 text-blue-700" />
+              <h3 className="text-base md:text-lg font-bold text-slate-900">Service Hymns</h3>
+            </div>
+            
+            <div className="space-y-2">
+              {bulletin.hymns.map((hymn) => (
+                <div key={hymn.id} className="flex items-center gap-2.5 md:gap-3 p-2.5 md:p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100 hover:shadow-sm transition-all">
+                  <div className="flex-shrink-0 w-9 h-9 md:w-11 md:h-11 bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-lg flex items-center justify-center font-bold text-sm md:text-base shadow-sm">
+                    {hymn.hymn_number || <Music className="w-4 h-4 md:w-5 md:h-5" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[9px] md:text-[10px] text-blue-600 font-bold uppercase tracking-wider">{hymn.hymn_type_display}</p>
+                    <p className="font-bold text-xs md:text-sm text-slate-900 truncate leading-tight">{hymn.hymn_title}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Notes */}
+          {bulletin.notes && (
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 rounded-xl md:rounded-2xl p-4 md:p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-2 md:mb-3">
+                <div className="w-6 h-6 md:w-7 md:h-7 bg-slate-600 rounded-lg flex items-center justify-center">
+                  <AlertCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
+                </div>
+                <h3 className="font-bold text-sm md:text-base text-slate-900">Announcements</h3>
+              </div>
+              <p className="text-xs md:text-sm text-slate-700 leading-relaxed whitespace-pre-line">{bulletin.notes}</p>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Notes */}
-      {bulletin.notes && (
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
-          <h3 className="font-bold text-lg mb-3 text-blue-900">Additional Notes</h3>
-          <p className="text-slate-700 whitespace-pre-line">{bulletin.notes}</p>
-        </div>
-      )}
     </div>
   );
 };

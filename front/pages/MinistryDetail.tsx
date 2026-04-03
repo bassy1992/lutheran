@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Users, 
   Mail, 
@@ -20,14 +20,21 @@ const MinistryDetail: React.FC = () => {
   const [ministry, setMinistry] = useState<Ministry | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [expressInterestLoading, setExpressInterestLoading] = useState(false);
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+  const [registrationLoading, setRegistrationLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const isAuthenticated = () => {
-    return !!localStorage.getItem('access_token');
-  };
+  
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    date_of_birth: '',
+    gender: 'male' as 'male' | 'female' | 'other',
+    address: '',
+    city: ''
+  });
 
   useEffect(() => {
     const fetchMinistry = async () => {
@@ -49,29 +56,52 @@ const MinistryDetail: React.FC = () => {
     fetchMinistry();
   }, [id]);
 
-  const handleExpressInterest = async () => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmitRegistration = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!ministry) return;
 
-    if (!isAuthenticated()) {
-      setErrorMessage('Please log in to express interest in this ministry.');
-      setTimeout(() => setErrorMessage(null), 5000);
-      return;
-    }
-
     try {
-      setExpressInterestLoading(true);
+      setRegistrationLoading(true);
       setErrorMessage(null);
-      const response = await ministriesService.expressInterest(ministry.id);
+      
+      const registrationData = {
+        ...formData,
+        date_of_birth: formData.date_of_birth || undefined
+      };
+      
+      const response = await ministriesService.register(ministry.id, registrationData);
       setSuccessMessage(response.message);
-      setShowConfirmDialog(false);
+      setShowRegistrationForm(false);
+      
+      // Reset form
+      setFormData({
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
+        date_of_birth: '',
+        gender: 'male',
+        address: '',
+        city: ''
+      });
+      
+      // Refresh ministry data to update member count
+      const updatedMinistry = await ministriesService.getMinistry(ministry.id);
+      setMinistry(updatedMinistry);
+      
       setTimeout(() => setSuccessMessage(null), 5000);
     } catch (err: any) {
-      console.error('Error expressing interest:', err);
-      const errorMsg = err.response?.data?.error || err.response?.data?.detail || 'Failed to express interest.';
+      console.error('Error registering:', err);
+      const errorMsg = err.response?.data?.error || err.response?.data?.detail || 'Failed to register. Please try again.';
       setErrorMessage(errorMsg);
       setTimeout(() => setErrorMessage(null), 5000);
     } finally {
-      setExpressInterestLoading(false);
+      setRegistrationLoading(false);
     }
   };
 
@@ -138,9 +168,9 @@ const MinistryDetail: React.FC = () => {
 
       {/* Hero Section */}
       <div className="relative h-96 mb-12">
-        {ministry.image ? (
+        {(ministry.image_display_url || ministry.image) ? (
           <img
-            src={ministry.image}
+            src={ministry.image_display_url || ministry.image || ''}
             alt={ministry.name}
             className="w-full h-full object-cover"
           />
@@ -172,26 +202,160 @@ const MinistryDetail: React.FC = () => {
                 <p className="text-slate-600 leading-relaxed whitespace-pre-line">{ministry.description}</p>
               </div>
 
-              {/* Express Interest Button */}
-              {isAuthenticated() && (
+              {/* Registration Form */}
+              {!showRegistrationForm ? (
                 <button
-                  onClick={() => setShowConfirmDialog(true)}
+                  onClick={() => setShowRegistrationForm(true)}
                   className="w-full bg-blue-700 text-white py-4 rounded-full font-bold hover:bg-blue-800 transition-all flex items-center justify-center gap-2"
                 >
                   <UserPlus className="w-5 h-5" />
-                  Express Interest in Joining
+                  Join This Ministry
                 </button>
-              )}
+              ) : (
+                <div className="bg-white rounded-2xl shadow-lg p-8">
+                  <h3 className="text-2xl font-bold mb-6">Ministry Registration</h3>
+                  <form onSubmit={handleSubmitRegistration} className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          First Name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="first_name"
+                          value={formData.first_name}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          Last Name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="last_name"
+                          value={formData.last_name}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                    </div>
 
-              {!isAuthenticated() && (
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
-                  <p className="text-slate-700 mb-4">Want to join this ministry?</p>
-                  <Link
-                    to="/login"
-                    className="inline-block bg-blue-700 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-800 transition-all"
-                  >
-                    Log In to Express Interest
-                  </Link>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                        Email <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                        Phone <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          Date of Birth
+                        </label>
+                        <input
+                          type="date"
+                          name="date_of_birth"
+                          value={formData.date_of_birth}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          Gender <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          name="gender"
+                          value={formData.gender}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                        Address
+                      </label>
+                      <textarea
+                        name="address"
+                        value={formData.address}
+                        onChange={handleInputChange}
+                        rows={3}
+                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                        City
+                      </label>
+                      <input
+                        type="text"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div className="flex gap-4">
+                      <button
+                        type="button"
+                        onClick={() => setShowRegistrationForm(false)}
+                        disabled={registrationLoading}
+                        className="flex-1 bg-slate-200 text-slate-700 py-3 rounded-full font-bold hover:bg-slate-300 transition-all disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={registrationLoading}
+                        className="flex-1 bg-blue-700 text-white py-3 rounded-full font-bold hover:bg-blue-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        {registrationLoading ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Registering...
+                          </>
+                        ) : (
+                          'Register'
+                        )}
+                      </button>
+                    </div>
+                  </form>
                 </div>
               )}
             </div>
@@ -250,45 +414,6 @@ const MinistryDetail: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Confirmation Dialog */}
-      {showConfirmDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-8 space-y-6">
-            <h3 className="text-2xl font-bold text-slate-900">Confirm Interest</h3>
-            <p className="text-slate-600">
-              Are you sure you want to express interest in joining <strong>{ministry.name}</strong>?
-            </p>
-            <p className="text-sm text-slate-500">
-              The ministry leader will be notified and will contact you soon.
-            </p>
-
-            <div className="flex gap-4">
-              <button
-                onClick={() => setShowConfirmDialog(false)}
-                disabled={expressInterestLoading}
-                className="flex-1 bg-slate-200 text-slate-700 py-3 rounded-full font-bold hover:bg-slate-300 transition-all disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleExpressInterest}
-                disabled={expressInterestLoading}
-                className="flex-1 bg-blue-700 text-white py-3 rounded-full font-bold hover:bg-blue-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {expressInterestLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  'Confirm'
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 // Added MapPin, Phone, and Mail icons to fix missing names error
-import { Menu, X, Cross, Church, MapPin, Phone, Mail } from 'lucide-react';
+import { Menu, X, Cross, Church, MapPin, Phone, Mail, Facebook, Instagram, Youtube, Twitter } from 'lucide-react';
 import { NAV_ITEMS, SOCIAL_LINKS } from '../constants';
 import { churchService } from '../src/services/api/endpoints/church.service';
 import { useLanguage } from '../src/contexts/LanguageContext';
@@ -93,28 +93,33 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 w-full bg-slate-900 border-t border-slate-800 shadow-2xl animate-fadeIn">
-            <div className="container mx-auto px-4 py-6 flex flex-col gap-2">
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={closeMenu}
-                  className={`px-4 py-3 rounded-lg text-base font-medium transition-all ${
-                    location.pathname === item.path 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-slate-200 hover:bg-slate-800'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+          <div className="lg:hidden absolute top-full left-0 w-full bg-slate-900/98 backdrop-blur-sm border-t border-slate-800 shadow-2xl animate-fadeIn max-h-[calc(100vh-80px)] overflow-y-auto">
+            <div className="container mx-auto px-4 py-4">
+              {/* Main Navigation - Grid Layout */}
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {NAV_ITEMS.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={closeMenu}
+                    className={`px-3 py-3 rounded-lg text-sm font-medium transition-all text-center ${
+                      location.pathname === item.path 
+                        ? 'bg-blue-600 text-white shadow-lg' 
+                        : 'bg-slate-800/50 text-slate-200 hover:bg-slate-800 active:scale-95'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+              
+              {/* Donate Button - Full Width */}
               <Link 
                 to="/donate" 
                 onClick={closeMenu}
-                className="mt-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold text-center hover:bg-blue-700 transition-all"
+                className="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3.5 rounded-lg font-bold text-center hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg active:scale-95"
               >
-                Give Now
+                💝 Give Now
               </Link>
             </div>
           </div>
@@ -126,55 +131,117 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {children}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-slate-900 text-slate-300 pt-20 pb-10">
-        <div className="container mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 border-b border-slate-800 pb-16">
-          <div className="space-y-6">
-            <Link to="/" className="flex items-center gap-2">
+      {/* Footer - Only show on home page */}
+      {location.pathname === '/' && (
+      <footer className="bg-slate-900 text-slate-300 pt-4 md:pt-8 pb-2 md:pb-4">
+        <div className="container mx-auto px-4 md:px-8">
+          
+          {/* Mobile: Simplified single column layout */}
+          <div className="md:hidden space-y-3 border-b border-slate-800 pb-3">
+            {/* Logo & Social */}
+            <div className="flex items-center justify-between">
+              <Link to="/" className="flex items-center gap-1.5">
+                <img 
+                  src="/logo.jpeg" 
+                  alt="Trinity Lutheran Church" 
+                  className="h-5 w-5 object-contain"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+                <div>
+                  <span className="block font-bold leading-tight text-[11px] text-white">TRINITY LUTHERAN</span>
+                  <span className="block text-[6px] tracking-wider font-medium text-blue-300">TEMA</span>
+                </div>
+              </Link>
+              <div className="flex gap-2">
+                {churchInfo?.facebook_url && (
+                  <a href={churchInfo.facebook_url} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-500 active:scale-95 transition-all" title="Facebook">
+                    <Facebook className="w-5 h-5" fill="currentColor" />
+                  </a>
+                )}
+                {churchInfo?.instagram_url && (
+                  <a href={churchInfo.instagram_url} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-pink-500 active:scale-95 transition-all" title="Instagram">
+                    <Instagram className="w-5 h-5" />
+                  </a>
+                )}
+                {churchInfo?.youtube_url && (
+                  <a href={churchInfo.youtube_url} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-red-500 active:scale-95 transition-all" title="YouTube">
+                    <Youtube className="w-5 h-5" fill="currentColor" />
+                  </a>
+                )}
+              </div>
+            </div>
+            
+            {/* Quick Contact */}
+            <div className="grid grid-cols-2 gap-2 text-[9px]">
+              <div className="flex items-center gap-1">
+                <Phone className="text-blue-500 w-2.5 h-2.5" />
+                <span>{churchInfo?.phone || '+233 24 130 3374'}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <MapPin className="text-blue-500 w-2.5 h-2.5" />
+                <span>{churchInfo?.city || 'Tema'}</span>
+              </div>
+            </div>
+            
+            {/* Quick Links */}
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[9px]">
+              {NAV_ITEMS.slice(0, 4).map((item) => (
+                <Link key={item.path} to={item.path} className="hover:text-blue-400 transition-colors">{item.label}</Link>
+              ))}
+              <Link to="/donate" className="text-blue-400 font-semibold">Donate</Link>
+            </div>
+          </div>
+
+          {/* Desktop: Full layout */}
+          <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6 border-b border-slate-800 pb-6">
+          <div className="space-y-2 md:space-y-3">
+            <Link to="/" className="flex items-center gap-1.5 md:gap-2">
               <img 
                 src="/logo.jpeg" 
                 alt="Trinity Lutheran Church" 
-                className="h-10 w-10 object-contain"
+                className="h-6 md:h-7 w-6 md:w-7 object-contain"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                   e.currentTarget.nextElementSibling?.classList.remove('hidden');
                 }}
               />
               <div className="p-1.5 rounded-lg bg-blue-700 text-white hidden">
-                <Church size={24} />
+                <Church size={16} className="md:w-[18px] md:h-[18px]" />
               </div>
               <div>
-                <span className="block font-bold leading-tight text-lg text-white">TRINITY LUTHERAN CHURCH</span>
-                <span className="block text-[9px] tracking-[0.25em] font-medium text-blue-300">TEMA</span>
+                <span className="block font-bold leading-tight text-xs md:text-sm text-white">TRINITY LUTHERAN CHURCH</span>
+                <span className="block text-[6px] md:text-[7px] tracking-[0.1em] md:tracking-[0.15em] font-medium text-blue-300">TEMA</span>
               </div>
             </Link>
-            <p className="text-slate-400 leading-relaxed">
-              Spreading the grace and truth of Jesus Christ throughout the heart of Ghana. Join our community of faith.
+            <p className="text-slate-400 leading-snug text-[10px] md:text-xs">
+              Spreading the grace and truth of Jesus Christ throughout Ghana.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-2 md:gap-3">
               {churchInfo?.facebook_url && (
-                <a href={churchInfo.facebook_url} target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-800 rounded-full hover:bg-blue-700 hover:text-white transition-all" title="Facebook">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                <a href={churchInfo.facebook_url} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-500 transition-all" title="Facebook">
+                  <Facebook className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" />
                 </a>
               )}
               {churchInfo?.twitter_url && (
-                <a href={churchInfo.twitter_url} target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-800 rounded-full hover:bg-blue-700 hover:text-white transition-all" title="Twitter">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 002.856-3.915 10 10 0 01-2.856.973 5 5 0 00-8.66 4.59 14.23 14.23 0 01-10.337-5.196 5 5 0 001.551 6.759 5 5 0 01-2.265-.567v.06a5 5 0 004.001 4.9 5 5 0 01-2.26.086 5 5 0 004.678 3.488 10.02 10.02 0 01-6.177 2.132c-.398 0-.79-.023-1.175-.067a14.201 14.201 0 007.713 2.262c9.256 0 14.336-7.662 14.336-14.322 0-.218-.005-.436-.015-.653a10.207 10.207 0 002.516-2.61z"/></svg>
+                <a href={churchInfo.twitter_url} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-sky-400 transition-all" title="Twitter">
+                  <Twitter className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" />
                 </a>
               )}
               {churchInfo?.instagram_url && (
-                <a href={churchInfo.instagram_url} target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-800 rounded-full hover:bg-blue-700 hover:text-white transition-all" title="Instagram">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" strokeWidth="2"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor" strokeWidth="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/></svg>
+                <a href={churchInfo.instagram_url} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-pink-500 transition-all" title="Instagram">
+                  <Instagram className="w-5 h-5 md:w-6 md:h-6" />
                 </a>
               )}
               {churchInfo?.youtube_url && (
-                <a href={churchInfo.youtube_url} target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-800 rounded-full hover:bg-blue-700 hover:text-white transition-all" title="YouTube">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                <a href={churchInfo.youtube_url} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-red-500 transition-all" title="YouTube">
+                  <Youtube className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" />
                 </a>
               )}
               {!churchInfo?.facebook_url && !churchInfo?.twitter_url && !churchInfo?.instagram_url && !churchInfo?.youtube_url && (
                 SOCIAL_LINKS.map((link, idx) => (
-                  <a key={idx} href={link.href} className="p-2 bg-slate-800 rounded-full hover:bg-blue-700 hover:text-white transition-all">
+                  <a key={idx} href={link.href} className="text-slate-400 hover:text-blue-500 transition-all">
                     {link.icon}
                   </a>
                 ))
@@ -183,8 +250,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider">Quick Links</h4>
-            <ul className="space-y-4">
+            <h4 className="text-white font-bold mb-2 md:mb-3 uppercase tracking-wider text-[10px] md:text-xs">Quick Links</h4>
+            <ul className="space-y-1 md:space-y-1.5 text-[10px] md:text-xs">
               {NAV_ITEMS.map((item) => (
                 <li key={item.path}>
                   <Link to={item.path} className="hover:text-blue-400 transition-colors">{item.label}</Link>
@@ -195,17 +262,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider">Service Times</h4>
-            <ul className="space-y-4 text-sm">
-              <li className="flex justify-between border-b border-slate-800 pb-2">
+            <h4 className="text-white font-bold mb-2 md:mb-3 uppercase tracking-wider text-[10px] md:text-xs">Service Times</h4>
+            <ul className="space-y-1 md:space-y-1.5 text-[10px] md:text-xs">
+              <li className="flex justify-between border-b border-slate-800 pb-1 md:pb-1.5">
                 <span>Sunday Worship</span>
                 <span className="text-blue-400">8:00 AM</span>
               </li>
-              <li className="flex justify-between border-b border-slate-800 pb-2">
+              <li className="flex justify-between border-b border-slate-800 pb-1 md:pb-1.5">
                 <span>Bible Study</span>
                 <span className="text-blue-400">Thu 6:00 PM</span>
               </li>
-              <li className="flex justify-between border-b border-slate-800 pb-2">
+              <li className="flex justify-between border-b border-slate-800 pb-1 md:pb-1.5">
                 <span>Prayer Meeting</span>
                 <span className="text-blue-400">Fri 7:00 PM</span>
               </li>
@@ -213,35 +280,37 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider">Contact Us</h4>
-            <ul className="space-y-4 text-sm">
-              <li className="flex items-start gap-3">
-                <MapPin className="text-blue-500 shrink-0 w-5 h-5" />
-                <span>{churchInfo?.address || 'P.O BOX CO 143, Cocoa Village'}, {churchInfo?.city || 'Tema'}, {churchInfo?.country || 'Ghana'}</span>
+            <h4 className="text-white font-bold mb-2 md:mb-3 uppercase tracking-wider text-[10px] md:text-xs">Contact Us</h4>
+            <ul className="space-y-1.5 md:space-y-2 text-[10px] md:text-xs">
+              <li className="flex items-start gap-1.5 md:gap-2">
+                <MapPin className="text-blue-500 shrink-0 w-3 h-3 md:w-4 md:h-4 mt-0.5" />
+                <span>{churchInfo?.address || 'P.O BOX CO 143, Cocoa Village'}, {churchInfo?.city || 'Tema'}</span>
               </li>
-              <li className="flex items-start gap-3">
-                <Phone className="text-blue-500 shrink-0 w-5 h-5" />
-                <div className="flex flex-col gap-1">
+              <li className="flex items-start gap-1.5 md:gap-2">
+                <Phone className="text-blue-500 shrink-0 w-3 h-3 md:w-4 md:h-4 mt-0.5" />
+                <div className="flex flex-col gap-0.5">
                   <span>{churchInfo?.phone || '+233 24 130 3374'}</span>
                   <span>+233 27 741 6250</span>
                 </div>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail className="text-blue-500 shrink-0 w-5 h-5" />
-                <span>{churchInfo?.email || 'info@trinitylutheranghana.org'}</span>
+              <li className="flex items-center gap-1.5 md:gap-2">
+                <Mail className="text-blue-500 shrink-0 w-3 h-3 md:w-4 md:h-4" />
+                <span className="break-all">{churchInfo?.email || 'info@trinitylutheranghana.org'}</span>
               </li>
             </ul>
           </div>
         </div>
         
-        <div className="container mx-auto px-4 md:px-8 mt-10 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-4">
-          <p>© {new Date().getFullYear()} Trinity Lutheran Church Ghana. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-white">Privacy Policy</a>
-            <a href="#" className="hover:text-white">Terms of Service</a>
+        <div className="container mx-auto px-4 md:px-8 mt-2 md:mt-4 flex flex-col md:flex-row justify-between items-center text-[8px] md:text-[10px] text-slate-500 gap-1 md:gap-2">
+          <p>© {new Date().getFullYear()} Trinity Lutheran Church Ghana</p>
+          <div className="flex gap-2 md:gap-3">
+            <a href="#" className="hover:text-white">Privacy</a>
+            <a href="#" className="hover:text-white">Terms</a>
           </div>
         </div>
+        </div>
       </footer>
+      )}
     </div>
   );
 };

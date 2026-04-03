@@ -26,11 +26,14 @@ export interface Pastor {
   role: 'head' | 'associate' | 'youth' | 'worship';
   bio: string;
   photo: string | null;
+  photo_url?: string | null;
+  photo_display_url?: string | null;
   email: string;
   phone: string;
   joined_date: string;
   is_active: boolean;
   order: number;
+  sermon_count?: number;
 }
 
 export interface ServiceTime {
@@ -132,6 +135,8 @@ export interface Ministry {
   description: string;
   leader: Member | null;
   image: string | null;
+  image_url: string | null;
+  image_display_url: string | null;
   is_active: boolean;
   member_count: number;
   created_at: string;

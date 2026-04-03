@@ -28,32 +28,7 @@ const MemberProfile = lazy(() => import('./pages/member/MemberProfile'));
 const MemberDonations = lazy(() => import('./pages/member/MemberDonations'));
 const MemberEvents = lazy(() => import('./pages/member/MemberEvents'));
 const PrayerRequestsPage = lazy(() => import('./pages/PrayerRequestsPage'));
-
-// Placeholder components for other pages
-const About = () => (
-  <div className="pt-32 pb-20 container mx-auto px-4 text-center">
-    <h1 className="text-4xl font-bold mb-6">About Us</h1>
-    <p className="text-slate-600 max-w-2xl mx-auto">
-      Trinity Lutheran Church has been a pillar of the community in Ghana for decades. We are a family of believers committed to living out the Gospel.
-    </p>
-    <div className="mt-12 grid md:grid-cols-3 gap-8 text-left">
-      <div className="p-8 bg-white shadow-lg rounded-2xl">
-        <h3 className="font-bold text-xl mb-4 text-blue-700">Our Vision</h3>
-        <p className="text-slate-600">To be a vibrant sanctuary of grace where Christ is known and lives are transformed.</p>
-      </div>
-      <div className="p-8 bg-white shadow-lg rounded-2xl">
-        <h3 className="font-bold text-xl mb-4 text-blue-700">Our Mission</h3>
-        <p className="text-slate-600">Proclaiming the Gospel of Jesus Christ through Word, Worship, and Witness in Ghana.</p>
-      </div>
-      <div className="p-8 bg-white shadow-lg rounded-2xl">
-        <h3 className="font-bold text-xl mb-4 text-blue-700">Our Heritage</h3>
-        <p className="text-slate-600">Proudly following the Lutheran confessions within the unique cultural context of West Africa.</p>
-      </div>
-    </div>
-  </div>
-);
-
-
+const About = lazy(() => import('./pages/About'));
 
 const App: React.FC = () => {
   return (
