@@ -70,11 +70,14 @@ export interface Event {
   title: string;
   description: string;
   event_type: 'service' | 'conference' | 'workshop' | 'retreat' | 'outreach' | 'social' | 'other';
+  ministry?: Ministry | null;
   start_date: string;
   end_date: string;
   location: string;
   address: string;
   image: string | null;
+  image_url?: string | null;
+  image_display_url?: string;
   max_attendees: number | null;
   registration_required: boolean;
   registration_deadline: string | null;

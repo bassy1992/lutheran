@@ -5,6 +5,7 @@ export const eventsService = {
   getEvents: (params?: {
     page?: number;
     event_type?: string;
+    ministry?: number;
     search?: string;
     is_featured?: boolean;
   }) =>

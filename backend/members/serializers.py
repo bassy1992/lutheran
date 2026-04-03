@@ -17,6 +17,7 @@ class MemberSerializer(serializers.ModelSerializer):
 
 class MinistrySerializer(serializers.ModelSerializer):
     member_count = serializers.ReadOnlyField()
+    event_count = serializers.SerializerMethodField()
     leader = MemberSerializer(read_only=True)
     image_display_url = serializers.ReadOnlyField()
     
@@ -24,9 +25,12 @@ class MinistrySerializer(serializers.ModelSerializer):
         model = Ministry
         fields = [
             'id', 'name', 'description', 'leader', 'image', 'image_url', 
-            'image_display_url', 'is_active', 'member_count', 'created_at'
+            'image_display_url', 'is_active', 'member_count', 'event_count', 'created_at'
         ]
         read_only_fields = ['created_at']
+    
+    def get_event_count(self, obj):
+        return obj.events.filter(is_published=True).count()
 
 
 class MinistryMembershipSerializer(serializers.ModelSerializer):

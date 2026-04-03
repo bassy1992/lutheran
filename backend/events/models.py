@@ -15,6 +15,7 @@ class Event(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     event_type = models.CharField(max_length=20, choices=EVENT_TYPES, default='other')
+    ministry = models.ForeignKey('members.Ministry', on_delete=models.SET_NULL, null=True, blank=True, related_name='events', help_text="Ministry organizing this event")
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     location = models.CharField(max_length=200)

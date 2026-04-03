@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   Users, 
   Mail, 
@@ -9,16 +9,21 @@ import {
   AlertCircle, 
   Loader2,
   CheckCircle,
-  UserPlus
+  UserPlus,
+  MapPin,
+  Clock
 } from 'lucide-react';
 import { ministriesService } from '../src/services/api/endpoints/ministries.service';
-import type { Ministry } from '../src/types/models';
+import { eventsService } from '../src/services/api/endpoints/events.service';
+import type { Ministry, Event } from '../src/types/models';
 
 const MinistryDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [ministry, setMinistry] = useState<Ministry | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [eventsLoading, setEventsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const [registrationLoading, setRegistrationLoading] = useState(false);
@@ -54,6 +59,24 @@ const MinistryDetail: React.FC = () => {
     };
 
     fetchMinistry();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (!id) return;
+      
+      try {
+        setEventsLoading(true);
+        const response = await eventsService.getEvents({ ministry: parseInt(id) });
+        setEvents(response.results || []);
+      } catch (err: any) {
+        console.error('Error fetching events:', err);
+      } finally {
+        setEventsLoading(false);
+      }
+    };
+
+    fetchEvents();
   }, [id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -200,6 +223,63 @@ const MinistryDetail: React.FC = () => {
               <div className="bg-white rounded-2xl shadow-lg p-8">
                 <h2 className="text-2xl font-bold mb-4">About This Ministry</h2>
                 <p className="text-slate-600 leading-relaxed whitespace-pre-line">{ministry.description}</p>
+              </div>
+
+              {/* Ministry Events */}
+              <div className="bg-white rounded-2xl shadow-lg p-8">
+                <h2 className="text-2xl font-bold mb-6">Upcoming Events</h2>
+                {eventsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="w-8 h-8 text-blue-700 animate-spin" />
+                  </div>
+                ) : events.length > 0 ? (
+                  <div className="space-y-4">
+                    {events.map((event) => (
+                      <Link
+                        key={event.id}
+                        to={`/events/${event.id}`}
+                        className="block p-4 border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md transition-all"
+                      >
+                        <div className="flex gap-4">
+                          {event.image_display_url && (
+                            <img
+                              src={event.image_display_url}
+                              alt={event.title}
+                              className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-lg text-slate-900 mb-2 truncate">{event.title}</h3>
+                            <div className="space-y-1 text-sm text-slate-600">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 flex-shrink-0" />
+                                <span>{new Date(event.start_date).toLocaleDateString('en-US', { 
+                                  weekday: 'short', 
+                                  month: 'short', 
+                                  day: 'numeric', 
+                                  year: 'numeric' 
+                                })}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Clock className="w-4 h-4 flex-shrink-0" />
+                                <span>{new Date(event.start_date).toLocaleTimeString('en-US', { 
+                                  hour: 'numeric', 
+                                  minute: '2-digit' 
+                                })}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <MapPin className="w-4 h-4 flex-shrink-0" />
+                                <span className="truncate">{event.location}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-500 text-center py-8">No upcoming events for this ministry.</p>
+                )}
               </div>
 
               {/* Registration Form */}

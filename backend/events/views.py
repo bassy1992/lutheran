@@ -16,6 +16,11 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         
+        # Filter by ministry
+        ministry_id = self.request.query_params.get('ministry')
+        if ministry_id:
+            queryset = queryset.filter(ministry_id=ministry_id)
+        
         # Filter by event type
         event_type = self.request.query_params.get('event_type')
         if event_type:

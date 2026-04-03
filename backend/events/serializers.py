@@ -1,17 +1,19 @@
 from rest_framework import serializers
 from .models import Event, EventRegistration
+from members.serializers import MinistrySerializer
 from django.utils import timezone
 
 
 class EventSerializer(serializers.ModelSerializer):
     attendee_count = serializers.ReadOnlyField()
     is_full = serializers.ReadOnlyField()
+    ministry = MinistrySerializer(read_only=True)
     
     class Meta:
         model = Event
         fields = [
-            'id', 'title', 'description', 'event_type', 'start_date', 'end_date',
-            'location', 'address', 'image', 'max_attendees', 'registration_required',
+            'id', 'title', 'description', 'event_type', 'ministry', 'start_date', 'end_date',
+            'location', 'address', 'image', 'image_url', 'max_attendees', 'registration_required',
             'registration_deadline', 'is_featured', 'is_published', 'attendee_count',
             'is_full', 'created_at', 'updated_at'
         ]

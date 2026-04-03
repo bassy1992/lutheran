@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   PlayCircle, 
@@ -158,6 +158,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ sermon, onPlay }) => {
 };
 
 const Sermons: React.FC = () => {
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  
   const [activeTab, setActiveTab] = useState<'sermons' | 'bulletin' | 'pastors'>('sermons');
   const [page, setPage] = useState(1);
   const [pastorFilter, setPastorFilter] = useState<number | ''>('');
@@ -201,26 +204,73 @@ const Sermons: React.FC = () => {
     loading: seriesLoading 
   } = useAPI<SermonSeries[]>(() => sermonsService.getSeries());
 
-  // Fetch sermons with filters
-  const { 
-    data: sermonsResponse, 
-    loading, 
-    error,
-    refetch 
-  } = useAPI<PaginatedResponse<Sermon>>(
-    () => sermonsService.getSermons({
-      page,
-      pastor: pastorFilter || undefined,
-      series: seriesFilter || undefined,
-      search: debouncedSearch || undefined,
-      date_from: dateFrom || undefined,
-      date_to: dateTo || undefined
-    }),
-    [page, pastorFilter, seriesFilter, debouncedSearch, dateFrom, dateTo]
-  );
+  // Fetch sermons with filters using manual state management
+  const [sermonsResponse, setSermonsResponse] = useState<PaginatedResponse<Sermon> | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchSermons = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('Fetching sermons with:', {
+        page,
+        pastor: pastorFilter || undefined,
+        series: seriesFilter || undefined,
+        search: debouncedSearch || undefined,
+        date_from: dateFrom || undefined,
+        date_to: dateTo || undefined
+      });
+      
+      const response = await sermonsService.getSermons({
+        page,
+        pastor: pastorFilter || undefined,
+        series: seriesFilter || undefined,
+        search: debouncedSearch || undefined,
+        date_from: dateFrom || undefined,
+        date_to: dateTo || undefined
+      });
+      
+      console.log('Sermons fetched successfully:', response);
+      setSermonsResponse(response);
+    } catch (err) {
+      console.error('Error fetching sermons:', err);
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, pastorFilter, seriesFilter, debouncedSearch, dateFrom, dateTo]);
+
+  useEffect(() => {
+    fetchSermons();
+  }, [fetchSermons]);
+
+  const refetch = fetchSermons;
 
   const sermons = sermonsResponse?.results || [];
   const totalPages = sermonsResponse ? Math.ceil(sermonsResponse.count / 10) : 1;
+
+  // Debug logging
+  console.log(`[${new Date().toISOString()}] Sermons Debug (render #${renderCount.current}):`, {
+    activeTab,
+    loading,
+    error,
+    sermonsResponse,
+    sermonsCount: sermons.length,
+    pastorFilter
+  });
+
+  // Additional debug for rendering conditions
+  useEffect(() => {
+    console.log(`[${new Date().toISOString()}] Render conditions:`, {
+      loading,
+      error: !!error,
+      sermonsLength: sermons.length,
+      willRenderGrid: !loading && !error && sermons.length > 0,
+      willRenderEmpty: !loading && !error && sermons.length === 0,
+      willRenderLoading: loading
+    });
+  }, [loading, error, sermons.length]);
 
   // Handle filter changes
   const handlePastorChange = (pastor: string) => {
@@ -483,6 +533,83 @@ const Sermons: React.FC = () => {
         </div>
       ) : (
         <>
+      {/* Search and Filters */}
+      <section className="bg-white border-b border-slate-200">
+        <div className="container mx-auto px-4 md:px-8 py-4 md:py-6">
+          <div className="space-y-4">
+            {/* Search Bar */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+              <input
+                type="text"
+                placeholder="Search sermons by title, scripture, or description..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <select
+                value={pastorFilter}
+                onChange={(e) => handlePastorChange(e.target.value)}
+                className="px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              >
+                <option value="">All Pastors</option>
+                {pastors?.map((pastor) => (
+                  <option key={pastor.id} value={pastor.id}>
+                    {pastor.name}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={seriesFilter}
+                onChange={(e) => handleSeriesChange(e.target.value)}
+                className="px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              >
+                <option value="">All Series</option>
+                {seriesList?.map((series) => (
+                  <option key={series.id} value={series.id}>
+                    {series.title}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => handleDateFromChange(e.target.value)}
+                placeholder="From Date"
+                className="px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+
+              <input
+                type="date"
+                value={dateTo}
+                onChange={(e) => handleDateToChange(e.target.value)}
+                placeholder="To Date"
+                className="px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Clear Filters Button */}
+            {hasActiveFilters && (
+              <div className="flex justify-end">
+                <button
+                  onClick={clearFilters}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                >
+                  <X size={16} />
+                  Clear Filters
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Sermons Grid */}
       <section className="py-8 md:py-12 bg-slate-50">
         <div className="container mx-auto px-4 md:px-8">
