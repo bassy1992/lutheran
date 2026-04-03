@@ -4,8 +4,8 @@ from .models import Member, Ministry, MinistryMembership, MinistryInterest
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ['full_name', 'email', 'phone', 'get_ministries', 'joined_date', 'is_active']
-    list_filter = ['gender', 'is_active', 'joined_date', 'ministry_memberships__ministry']
+    list_display = ['full_name', 'email', 'phone', 'membership_status', 'get_ministries', 'joined_date', 'is_active']
+    list_filter = ['membership_status', 'gender', 'is_active', 'joined_date', 'ministry_memberships__ministry']
     search_fields = ['first_name', 'last_name', 'email', 'phone']
     date_hierarchy = 'joined_date'
     
@@ -16,7 +16,7 @@ class MemberAdmin(admin.ModelAdmin):
             ministry_names = [membership.ministry.name for membership in ministries]
             return ', '.join(ministry_names)
         return 'No ministry'
-    get_ministries.short_description = 'Ministries'
+    get_ministries.short_description = 'Registered Ministries'
 
 
 @admin.register(Ministry)
