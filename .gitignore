@@ -49,4 +49,6 @@ backend/.env*
 
 # OS
 .DS_Store
+._.DS_Store
+._*
 Thumbs.db
