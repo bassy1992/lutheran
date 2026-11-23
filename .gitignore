@@ -40,7 +40,12 @@ front/dist/
 # Environment variables
 .env
 .env.local
+.env.production
+.env.spaces
+.env.staging
 front/.env.local
+backend/.env*
+!backend/.env.example
 
 # OS
 .DS_Store
